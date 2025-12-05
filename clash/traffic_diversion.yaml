@@ -1,0 +1,331 @@
+# Template metadata - 以下字段会在生成时被替换
+# name: 订阅或配置名称，用于界面显示
+# port: clash 本地监听端口
+# socks-port: socks5 端口
+# redir-port: redir 端口（可选）
+# allow-lan: 是否允许局域网访问（true/false）
+# __PROXIES__: 这里会被注入具体代理配置（完整的代理节点列表）
+# __PROXY_GROUPS__: 这里会被注入代理分组配置（Proxy Group 模板）
+
+proxy-providers: {}
+
+# Proxies 占位符 - 订阅转换器应将所有节点替换到此处
+# 使用占位符 `__PROXIES__`（包含 YAML 列表），示例：
+# __PROXIES__:
+# - name: "节点1"
+#   type: vmess
+#   server: 1.2.3.4
+#   port: 443
+#   uuid: xxxxx
+#   alterId: 0
+#   cipher: auto
+# - name: "节点2"
+#   type: ss
+#   server: 5.6.7.8
+#   port: 8388
+#   cipher: chacha20-ietf-poly1305
+#   password: "passwd"
+
+proxies: __PROXIES__
+
+# Proxy Groups 模板 - 订阅转换器可根据需要替换或扩展 `__PROXY_GROUPS__`
+# 常见分组示例已提供，生成器应替换 `__PROXY_NAMES__` 为所有代理名称的逗号分隔列表
+proxy-groups:
+  - name: 🚀 节点选择
+    type: select
+    proxies: [♻️ 自动选择, DIRECT, __PROXY_NAMES__]
+
+  - name: ♻️ 自动选择
+    type: url-test
+    url: http://www.gstatic.com/generate_204
+    interval: 300
+    tolerance: 50
+    proxies: [__PROXY_NAMES__]
+
+  - name: 🌍 国外媒体
+    type: select
+    proxies: [🚀 节点选择, ♻️ 自动选择, __PROXY_NAMES__]
+
+  - name: 📲 电报信息
+    type: select
+    proxies: [🚀 节点选择, ♻️ 自动选择, __PROXY_NAMES__]
+
+  - name: 🤖 OpenAI
+    type: select
+    proxies: [🚀 节点选择, ♻️ 自动选择, __PROXY_NAMES__]
+
+  - name: 🍎 苹果服务
+    type: select
+    proxies: [DIRECT, 🚀 节点选择, ♻️ 自动选择, __PROXY_NAMES__]
+
+  - name: Ⓜ️ 微软服务
+    type: select
+    proxies: [DIRECT, 🚀 节点选择, ♻️ 自动选择, __PROXY_NAMES__]
+
+  - name: 🖥️ 应用程序
+    type: select
+    proxies: [DIRECT, 🚀 节点选择, ♻️ 自动选择, __PROXY_NAMES__]
+
+  - name: 🎮 游戏平台
+    type: select
+    proxies: [DIRECT, 🚀 节点选择, ♻️ 自动选择, __PROXY_NAMES__]
+
+  - name: 📈 网络测速
+    type: select
+    proxies: [DIRECT, 🚀 节点选择, ♻️ 自动选择, __PROXY_NAMES__]
+
+  - name: 🐟 漏网之鱼
+    type: select
+    proxies: [🚀 节点选择, ♻️ 自动选择, DIRECT, __PROXY_NAMES__]
+
+rule-providers:
+  reject:
+    type: http
+    behavior: domain
+    url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/reject.txt"
+    path: ./ruleset/reject.yaml
+    interval: 86400
+
+  icloud:
+    type: http
+    behavior: domain
+    url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/icloud.txt"
+    path: ./ruleset/icloud.yaml
+    interval: 86400
+
+  apple:
+    type: http
+    behavior: domain
+    url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/apple.txt"
+    path: ./ruleset/apple.yaml
+    interval: 86400
+
+  google:
+    type: http
+    behavior: domain
+    url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/google.txt"
+    path: ./ruleset/google.yaml
+    interval: 86400
+
+  proxy:
+    type: http
+    behavior: domain
+    url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/proxy.txt"
+    path: ./ruleset/proxy.yaml
+    interval: 86400
+
+  direct:
+    type: http
+    behavior: domain
+    url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/direct.txt"
+    path: ./ruleset/direct.yaml
+    interval: 86400
+
+  private:
+    type: http
+    behavior: domain
+    url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/private.txt"
+    path: ./ruleset/private.yaml
+    interval: 86400
+
+  gfw:
+    type: http
+    behavior: domain
+    url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/gfw.txt"
+    path: ./ruleset/gfw.yaml
+    interval: 86400
+
+  tld-not-cn:
+    type: http
+    behavior: domain
+    url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/tld-not-cn.txt"
+    path: ./ruleset/tld-not-cn.yaml
+    interval: 86400
+
+  telegramcidr:
+    type: http
+    behavior: ipcidr
+    url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/telegramcidr.txt"
+    path: ./ruleset/telegramcidr.yaml
+    interval: 86400
+
+  cncidr:
+    type: http
+    behavior: ipcidr
+    url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/cncidr.txt"
+    path: ./ruleset/cncidr.yaml
+    interval: 86400
+
+  lancidr:
+    type: http
+    behavior: ipcidr
+    url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/lancidr.txt"
+    path: ./ruleset/lancidr.yaml
+    interval: 86400
+
+  applications:
+    type: http
+    behavior: classical
+    url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/applications.txt"
+    path: ./ruleset/applications.yaml
+    interval: 86400
+
+  OpenAI:
+    type: http
+    behavior: classical
+    url: "https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/OpenAI/OpenAI.yaml"
+    path: ./ruleset/OpenAI.yaml
+    interval: 86400
+
+  Telegram:
+    type: http
+    behavior: classical
+    url: "https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Telegram/Telegram.yaml"
+    path: ./ruleset/Telegram.yaml
+    interval: 86400
+
+  YouTube:
+    type: http
+    behavior: classical
+    url: "https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/YouTube/YouTube.yaml"
+    path: ./ruleset/YouTube.yaml
+    interval: 86400
+
+  Netflix:
+    type: http
+    behavior: classical
+    url: "https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Netflix/Netflix.yaml"
+    path: ./ruleset/Netflix.yaml
+    interval: 86400
+
+  Microsoft:
+    type: http
+    behavior: classical
+    url: "https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Microsoft/Microsoft.yaml"
+    path: ./ruleset/Microsoft.yaml
+    interval: 86400
+
+  Disney:
+    type: http
+    behavior: classical
+    url: "https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Disney/Disney.yaml"
+    path: ./ruleset/Disney.yaml
+    interval: 86400
+
+  Spotify:
+    type: http
+    behavior: classical
+    url: "https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Spotify/Spotify.yaml"
+    path: ./ruleset/Spotify.yaml
+    interval: 86400
+
+  Steam:
+    type: http
+    behavior: classical
+    url: "https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Steam/Steam.yaml"
+    path: ./ruleset/Steam.yaml
+    interval: 86400
+
+  Speedtest:
+    type: http
+    behavior: classical
+    url: "https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Speedtest/Speedtest.yaml"
+    path: ./ruleset/Speedtest.yaml
+    interval: 86400
+
+# gfwlist rules should be placed at the end of domain rules
+# to avoid misclassification by other rules
+# 黑名单规则应放在域名规则的最后，以避免被其他规则误判
+rules:
+  - RULE-SET,applications,🖥️ 应用程序
+  - DOMAIN,clash.razord.top,DIRECT
+  - DOMAIN,yacd.haishan.me,DIRECT
+  - RULE-SET,private,DIRECT
+  - RULE-SET,reject,REJECT
+
+  # 特定应用分流
+  - RULE-SET,OpenAI,🤖 OpenAI
+  - RULE-SET,YouTube,🌍 国外媒体
+  - RULE-SET,Netflix,🌍 国外媒体
+  - RULE-SET,Disney,🌍 国外媒体
+  - RULE-SET,Spotify,🌍 国外媒体
+  - RULE-SET,Telegram,📲 电报信息
+  - RULE-SET,Microsoft,Ⓜ️ 微软服务
+  - RULE-SET,Steam,🎮 游戏平台
+  - RULE-SET,Speedtest,📈 网络测速
+
+  # 基础分流
+  - RULE-SET,icloud,🍎 苹果服务
+  - RULE-SET,apple,🍎 苹果服务
+  - RULE-SET,google,🚀 节点选择
+  - RULE-SET,proxy,🚀 节点选择
+  - RULE-SET,direct,DIRECT
+  - RULE-SET,lancidr,DIRECT
+  - RULE-SET,cncidr,DIRECT
+  - RULE-SET,telegramcidr,📲 电报信息
+
+  - GEOIP,LAN,DIRECT
+  - GEOIP,CN,DIRECT
+  - MATCH,🐟 漏网之鱼
+# -----------------------------
+# 使用说明（Template 使用与占位符替换示例）
+# -----------------------------
+# 占位符说明：
+# - `__PROXIES__` : 订阅转换器应将此占位符替换为完整的 `proxies:` 列表（YAML 列表格式），包括每个节点的所有字段。
+# - `__PROXY_NAMES__` : 用于代理分组，替换为代理名称的逗号/方括号列表（无需引号或带引号均可），例如："节点1, 节点2" 或 ["节点1","节点2"]。
+# - `__PROXY_GROUPS__` :（可选）如果你想让生成器替换整个 `proxy-groups` 区块，可以使用此占位符。
+
+# 最小替换示例（Mustache 风格或简单模板替换都可）：
+# 模板片段：
+# proxies: __PROXIES__
+# proxy-groups:
+#   - name: "Proxy"
+#     type: select
+#     proxies: [__PROXY_NAMES__]
+#
+# Mustache 示例（伪代码）：
+# {
+#   "proxies": {{#nodes}}
+#   - name: "{{name}}"
+#     type: {{type}}
+#     server: {{server}}
+#     port: {{port}}
+#   {{/nodes}}
+# }
+
+# PowerShell (pwsh) 简单替换示例：
+# 假设已有 `proxies.yaml` 内容（已是 YAML 列表），将其注入模板中的 `__PROXIES__`：
+#
+# $tpl = Get-Content -Raw .\clash\template.yaml
+# $proxies = Get-Content -Raw .\out\proxies.yaml
+# $tpl = $tpl -replace '__PROXIES__', $proxies
+# $tpl | Set-Content .\clash\generated.yaml
+#
+# 将代理名称列表注入 `__PROXY_NAMES__`（逗号或 JSON 数组形式）：
+# $names = '"节点1","节点2","节点3"'   # 或者生成 JSON 数组
+# $tpl = $tpl -replace '\[__PROXY_NAMES__\]', "[$names]"
+
+# 注意与建议：
+# - 确保注入的 YAML 格式正确（缩进与换行），否则 clash 解析会失败。
+# - 推荐先将 `__PROXIES__` 替换为多行 YAML（包含每个代理完整字段），再将 `__PROXY_NAMES__` 替换为代理名称数组。
+# - 如果需要 `proxy-providers` 功能，请在 `proxy-providers:` 下以 YAML 对象形式填充，并在 `proxy-groups` 中使用 `PROXY-PROVIDER-NAME`。
+
+# 示例：最终生成后的关键段（缩略示意）
+# proxies:
+# - name: "节点1"
+#   type: vmess
+#   server: 1.2.3.4
+#   port: 443
+# - name: "节点2"
+#   type: ss
+#   server: 5.6.7.8
+#   port: 8388
+#
+# proxy-groups:
+# - name: "Proxy"
+#   type: select
+#   proxies:
+#     - 节点1
+#     - 节点2
+
+# 如果你希望我为订阅转换器生成一个示例脚本（Node/Python/PowerShell），告诉我偏好语言，我可以继续生成。

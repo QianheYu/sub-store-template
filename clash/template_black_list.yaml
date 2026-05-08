@@ -136,11 +136,60 @@ rule-providers:
     path: ./ruleset/lancidr.yaml
     interval: 86400
 
-  applications:
+  openai:
     type: http
-    behavior: classical
-    url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/applications.txt"
-    path: ./ruleset/applications.yaml
+    behavior: domain
+    url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/openai.txt"
+    path: ./ruleset/openai.yaml
+    interval: 86400
+
+  onedrive:
+    type: http
+    behavior: domain
+    url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/onedrive.txt"
+    path: ./ruleset/onedrive.yaml
+    interval: 86400
+
+  github:
+    type: http
+    behavior: domain
+    url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/github.txt"
+    path: ./ruleset/github.yaml
+    interval: 86400
+
+  telegram:
+    type: http
+    behavior: domain
+    url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/telegram.txt"
+    path: ./ruleset/telegram.yaml
+    interval: 86400
+
+  bing:
+    type: http
+    behavior: domain
+    url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/bing.txt"
+    path: ./ruleset/bing.yaml
+    interval: 86400
+
+  meta:
+    type: http
+    behavior: domain
+    url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/meta.txt"
+    path: ./ruleset/meta.yaml
+    interval: 86400
+
+  adblock:
+    type: http
+    behavior: domain
+    url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/adblock.txt"
+    path: ./ruleset/adblock.yaml
+    interval: 86400
+
+  steven:
+    type: http
+    behavior: domain
+    url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/steven.txt"
+    path: ./ruleset/steven.yaml
     interval: 86400
 
 # gfwlist rules should be placed at the end of domain rules
@@ -148,6 +197,8 @@ rule-providers:
 # 黑名单规则应放在域名规则的最后，以避免被其他规则误判
 rules:
   - RULE-SET,applications,DIRECT
+  - RULE-SET,adblock,DIRECT
+  - RULE-SET,steven,DIRECT
   - DOMAIN,clash.razord.top,DIRECT
   - DOMAIN,yacd.haishan.me,DIRECT
   - RULE-SET,private,DIRECT
@@ -157,9 +208,17 @@ rules:
   - RULE-SET,google,PROXY
   - RULE-SET,proxy,PROXY
   - RULE-SET,direct,DIRECT
+  - RULE-SET,openai,PROXY
+  - RULE-SET,onedrive,PROXY
+  - RULE-SET,github,PROXY
+  - RULE-SET,telegram,PROXY
+  - RULE-SET,bing,PROXY
+  - RULE-SET,meta,PROXY
   - RULE-SET,lancidr,DIRECT
   - RULE-SET,cncidr,DIRECT
   - RULE-SET,telegramcidr,PROXY
+  - RULE-SET,tld-not-cn,PROXY
+  - RULE-SET,gfw,PROXY
   - GEOIP,LAN,DIRECT
   - GEOIP,CN,DIRECT
   - MATCH,PROXY

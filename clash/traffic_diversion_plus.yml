@@ -5237,19 +5237,19 @@ dns:
     - tls://223.5.5.5
   # 默认 DNS：优先尝试解析国内域名，速度快
   nameserver:
-    - https://hk-hkg.doh.sb/dns-query#PROXY
-    - https://doh.dns.sb/dns-query#PROXY
-    - https://1.0.0.1/dns-query#PROXY
-    - https://1.1.1.1/dns-query#PROXY
-    - https://cloudflare-dns.com/dns-query#PROXY
+    - https://hk-hkg.doh.sb/dns-query
+    - https://doh.dns.sb/dns-query
+    - https://1.0.0.1/dns-query
+    - https://1.1.1.1/dns-query
+    - https://cloudflare-dns.com/dns-query
   # 国外解析服务器（走加密协议）
   # 备用 DNS：当 nameserver 解析结果被判定为被污染时，使用 fallback
   fallback:
-    - https://hk-hkg.doh.sb/dns-query#PROXY
-    - https://doh.dns.sb/dns-query#PROXY
-    - https://1.0.0.1/dns-query#PROXY
-    - https://1.1.1.1/dns-query#PROXY
-    - https://cloudflare-dns.com/dns-query#PROXY
+    - https://hk-hkg.doh.sb/dns-query
+    - https://doh.dns.sb/dns-query
+    - https://1.0.0.1/dns-query
+    - https://1.1.1.1/dns-query
+    - https://cloudflare-dns.com/dns-query
   # 判定污染的逻辑：如果 nameserver 返回的 IP 不在这些国家，则认为被污染，触发 fallback
   fallback-filter:
     geoip: true
@@ -5288,8 +5288,8 @@ dns:
   #     - https://dns.alidns.com/dns-query
   #     - https://daneserver.dnspod.cn/dns-query
   #   "geosite:geolocation-!cn":
-  #     - https://dns.cloudflare.com/dns-query#PROXY
-  #     - https://dns.google/dns-query#PROXY
+  #     - https://dns.cloudflare.com/dns-query
+  #     - https://dns.google/dns-query
 
 # 配合 DNS 配置的 TUN 模式设置
 tun:

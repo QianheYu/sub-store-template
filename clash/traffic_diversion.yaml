@@ -1,0 +1,5366 @@
+geodata-mode: true
+# geodata-loader: memconservative   # 或 standard
+# 指定 geosite.dat 和 geoip.dat 的下载地址（强烈推荐使用 jsdelivr 或 ghproxy 加速）
+geox-url:
+  geoip: "https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@release/geoip.dat"
+  geosite: "https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@release/geosite.dat"
+  mmdb: "https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@release/country.mmdb"
+  asn: "https://github.com/xishang0128/geoip/releases/download/latest/GeoLite2-ASN.mmdb"
+  # geosite: "https://cdn.jsdelivr.net/gh/Loyalsoldier/v2ray-rules-dat@release/geosite.dat"
+# 自动更新（可选，单位小时）
+geo-auto-update: true
+geo-update-interval: 24
+
+# Template metadata - 以下字段会在生成时被替换
+# name: 订阅或配置名称，用于界面显示
+# port: clash 本地监听端口
+# socks-port: socks5 端口
+# redir-port: redir 端口（可选）
+# allow-lan: 是否允许局域网访问（true/false）
+# __PROXIES__: 这里会被注入具体代理配置（完整的代理节点列表）
+# __PROXY_GROUPS__: 这里会被注入代理分组配置（Proxy Group 模板）
+
+proxy-providers: {}
+
+# Proxies 占位符 - 订阅转换器应将所有节点替换到此处
+# 使用占位符 `__PROXIES__`（包含 YAML 列表），示例：
+# __PROXIES__:
+# - name: "节点1"
+#   type: vmess
+#   server: 1.2.3.4
+#   port: 443
+#   uuid: xxxxx
+#   alterId: 0
+#   cipher: auto
+# - name: "节点2"
+#   type: ss
+#   server: 5.6.7.8
+#   port: 8388
+#   cipher: chacha20-ietf-poly1305
+#   password: "passwd"
+
+proxies: __PROXIES__
+
+# Proxy Groups 模板 - 订阅转换器可根据需要替换或扩展 `__PROXY_GROUPS__`
+# 常见分组示例已提供，生成器应替换 `__PROXY_NAMES__` 为所有代理名称的逗号分隔列表
+proxy-groups:
+  # ==============================
+  # 1. 核心控制中心 (Core Controls)
+  # ==============================
+  - name: 🚀 节点选择
+    type: select
+    proxies: [♻️ 自动选择, DIRECT, __PROXY_NAMES__]
+
+  - name: ♻️ 自动选择
+    type: url-test
+    url: http://www.gstatic.com/generate_204
+    interval: 300
+    tolerance: 50
+    proxies: [__PROXY_NAMES__]
+
+  # ==============================
+  # 2. 基础设施 (Infrastructure)
+  # ==============================
+  - name: 🚫 广告拦截
+    type: select
+    proxies: [REJECT, DIRECT, 🚀 节点选择]
+
+  - name: 🛡️ DNS及证书-国内
+    type: select
+    proxies: [DIRECT, 🚀 节点选择, __PROXY_NAMES__]
+
+  - name: 🌐 DNS及证书-国外
+    type: select
+    proxies: [🚀 节点选择, ♻️ 自动选择, __PROXY_NAMES__, DIRECT]
+
+  # ==============================
+  # 3. 核心平台服务 (Big Tech & AI)
+  # ==============================
+  - name: 🤖 人工智能
+    type: select
+    proxies: [🚀 节点选择, ♻️ 自动选择, __PROXY_NAMES__, DIRECT]
+
+  - name: 🍎 苹果服务(不代理www.apple.com)
+    type: select
+    proxies: [🚀 节点选择, ♻️ 自动选择, __PROXY_NAMES__, DIRECT]
+
+  - name: Ⓜ️ 微软服务
+    type: select
+    proxies: [🚀 节点选择, ♻️ 自动选择, __PROXY_NAMES__, DIRECT]
+
+  - name: 🚀 谷歌服务
+    type: select
+    proxies: [🚀 节点选择, ♻️ 自动选择, __PROXY_NAMES__]
+
+  # ==============================
+  # 4. 社交与媒体 (Social & Media)
+  # ==============================
+  - name: 💬 社交媒体-国内
+    type: select
+    proxies: [DIRECT, 🚀 节点选择, __PROXY_NAMES__]
+
+  - name: 📲 社交媒体-国外
+    type: select
+    proxies: [🚀 节点选择, ♻️ 自动选择, __PROXY_NAMES__, DIRECT]
+
+  - name: 🎬 视频流媒体-国内
+    type: select
+    proxies: [DIRECT, 🚀 节点选择, __PROXY_NAMES__]
+
+  - name: 🎥 视频流媒体-国外
+    type: select
+    proxies: [🚀 节点选择, ♻️ 自动选择, __PROXY_NAMES__, DIRECT]
+
+  - name: 🎵 音乐平台-国内
+    type: select
+    proxies: [DIRECT, 🚀 节点选择, __PROXY_NAMES__]
+
+  - name: 🎧 音乐平台-国外
+    type: select
+    proxies: [🚀 节点选择, ♻️ 自动选择, __PROXY_NAMES__, DIRECT]
+
+  - name: 📰 新闻媒体-国内
+    type: select
+    proxies: [DIRECT, 🚀 节点选择, __PROXY_NAMES__]
+
+  - name: 🌍 新闻媒体-国外
+    type: select
+    proxies: [🚀 节点选择, ♻️ 自动选择, __PROXY_NAMES__, DIRECT]
+
+  # ==============================
+  # 5. 开发、工具与求职 (Productivity)
+  # ==============================
+  - name: 💻 开发与云服务-国内
+    type: select
+    proxies: [DIRECT, 🚀 节点选择, __PROXY_NAMES__]
+
+  - name: ☁️ 开发与云服务-国外
+    type: select
+    proxies: [🚀 节点选择, ♻️ 自动选择, __PROXY_NAMES__, DIRECT]
+
+  - name: 🛠️ 工具网盘-国内
+    type: select
+    proxies: [DIRECT, 🚀 节点选择, __PROXY_NAMES__]
+
+  - name: 📦 工具网盘-国外
+    type: select
+    proxies: [🚀 节点选择, ♻️ 自动选择, __PROXY_NAMES__, DIRECT]
+
+  - name: 🎓 求职教育-国内
+    type: select
+    proxies: [DIRECT, 🚀 节点选择, __PROXY_NAMES__]
+
+  - name: 🏫 求职教育-国外
+    type: select
+    proxies: [🚀 节点选择, ♻️ 自动选择, __PROXY_NAMES__, DIRECT]
+
+  # ==============================
+  # 6. 生活、电商与金融 (Life & Commerce)
+  # ==============================
+  - name: 💰 金融服务-国内
+    type: select
+    proxies: [DIRECT, 🚀 节点选择, __PROXY_NAMES__]
+
+  - name: 💳 金融服务-国外
+    type: select
+    proxies: [🚀 节点选择, DIRECT, __PROXY_NAMES__]
+
+  - name: 🛒 电商购物-国内
+    type: select
+    proxies: [DIRECT, 🚀 节点选择, __PROXY_NAMES__]
+
+  - name: 🛍️ 电商购物-国外
+    type: select
+    proxies: [🚀 节点选择, DIRECT, __PROXY_NAMES__]
+
+  - name: ✈️ 出行物流-国内
+    type: select
+    proxies: [DIRECT, 🚀 节点选择, __PROXY_NAMES__]
+
+  - name: 🗺️ 出行物流-国外
+    type: select
+    proxies: [🚀 节点选择, DIRECT, __PROXY_NAMES__]
+
+  - name: 🏢 企业网站-国内
+    type: select
+    proxies: [DIRECT, 🚀 节点选择, __PROXY_NAMES__]
+
+  - name: 👔 企业网站-国外
+    type: select
+    proxies: [🚀 节点选择, DIRECT, __PROXY_NAMES__]
+
+  - name: 🖥️ 应用程序
+    type: select
+    proxies: [🚀 节点选择, ♻️ 自动选择, __PROXY_NAMES__, DIRECT]
+
+  # ==============================
+  # 7. 专项与其他 (Special & Others)
+  # ==============================
+  - name: 🎮 游戏平台-国内
+    type: select
+    proxies: [DIRECT, 🚀 节点选择, __PROXY_NAMES__]
+
+  - name: 🕹️ 游戏平台-国外
+    type: select
+    proxies: [🚀 节点选择, ♻️ 自动选择, __PROXY_NAMES__, DIRECT]
+
+  - name: 🏠 群晖 NAS
+    type: select
+    proxies: [DIRECT, 🚀 节点选择, __PROXY_NAMES__]
+
+  - name: 📈 网络测速
+    type: select
+    proxies: [DIRECT, 🚀 节点选择, __PROXY_NAMES__]
+
+  - name: 🌏 全球代理
+    type: select
+    proxies: [🚀 节点选择, ♻️ 自动选择, __PROXY_NAMES__, DIRECT]
+
+  - name: 🐟 漏网之鱼
+    type: select
+    proxies: [DIRECT, 🚀 节点选择, ♻️ 自动选择, __PROXY_NAMES__]
+
+rule-providers:
+  reject:
+    type: http
+    behavior: domain
+    url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/reject.txt"
+    path: ./ruleset/reject.yaml
+    interval: 86400
+
+  icloud:
+    type: http
+    behavior: domain
+    url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/icloud.txt"
+    path: ./ruleset/icloud.yaml
+    interval: 86400
+
+  apple:
+    type: http
+    behavior: domain
+    url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/apple.txt"
+    path: ./ruleset/apple.yaml
+    interval: 86400
+
+  google:
+    type: http
+    behavior: domain
+    url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/google.txt"
+    path: ./ruleset/google.yaml
+    interval: 86400
+
+  proxy:
+    type: http
+    behavior: domain
+    url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/proxy.txt"
+    path: ./ruleset/proxy.yaml
+    interval: 86400
+
+  direct:
+    type: http
+    behavior: domain
+    url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/direct.txt"
+    path: ./ruleset/direct.yaml
+    interval: 86400
+
+  private:
+    type: http
+    behavior: domain
+    url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/private.txt"
+    path: ./ruleset/private.yaml
+    interval: 86400
+
+  gfw:
+    type: http
+    behavior: domain
+    url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/gfw.txt"
+    path: ./ruleset/gfw.yaml
+    interval: 86400
+
+  tld-not-cn:
+    type: http
+    behavior: domain
+    url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/tld-not-cn.txt"
+    path: ./ruleset/tld-not-cn.yaml
+    interval: 86400
+
+  telegramcidr:
+    type: http
+    behavior: ipcidr
+    url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/telegramcidr.txt"
+    path: ./ruleset/telegramcidr.yaml
+    interval: 86400
+
+  cncidr:
+    type: http
+    behavior: ipcidr
+    url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/cncidr.txt"
+    path: ./ruleset/cncidr.yaml
+    interval: 86400
+
+  lancidr:
+    type: http
+    behavior: ipcidr
+    url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/lancidr.txt"
+    path: ./ruleset/lancidr.yaml
+    interval: 86400
+
+  applications:
+    type: http
+    behavior: classical
+    url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/applications.txt"
+    path: ./ruleset/applications.yaml
+    interval: 86400
+
+  openai:
+    type: http
+    behavior: domain
+    url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/openai.txt"
+    path: ./ruleset/openai.yaml
+    interval: 86400
+
+  onedrive:
+    type: http
+    behavior: domain
+    url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/onedrive.txt"
+    path: ./ruleset/onedrive.yaml
+    interval: 86400
+
+  github:
+    type: http
+    behavior: domain
+    url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/github.txt"
+    path: ./ruleset/github.yaml
+    interval: 86400
+
+  telegram:
+    type: http
+    behavior: domain
+    url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/telegram.txt"
+    path: ./ruleset/telegram.yaml
+    interval: 86400
+
+  bing:
+    type: http
+    behavior: domain
+    url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/bing.txt"
+    path: ./ruleset/bing.yaml
+    interval: 86400
+
+  meta:
+    type: http
+    behavior: domain
+    url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/meta.txt"
+    path: ./ruleset/meta.yaml
+    interval: 86400
+
+  adblock:
+    type: http
+    behavior: domain
+    url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/adblock.txt"
+    path: ./ruleset/adblock.yaml
+    interval: 86400
+
+  steven:
+    type: http
+    behavior: domain
+    url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/steven.txt"
+    path: ./ruleset/steven.yaml
+    interval: 86400
+
+  115:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/115/115.yaml"
+    path: ./ruleset/115.yaml
+    interval: 86400
+  12306:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/12306/12306.yaml"
+    path: ./ruleset/12306.yaml
+    interval: 86400
+  1337x:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/1337x/1337x.yaml"
+    path: ./ruleset/1337x.yaml
+    interval: 86400
+  17173:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/17173/17173.yaml"
+    path: ./ruleset/17173.yaml
+    interval: 86400
+  178:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/178/178.yaml"
+    path: ./ruleset/178.yaml
+    interval: 86400
+  17zuoye:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/17zuoye/17zuoye.yaml"
+    path: ./ruleset/17zuoye.yaml
+    interval: 86400
+  2KGames:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/2KGames/2KGames.yaml"
+    path: ./ruleset/2KGames.yaml
+    interval: 86400
+  360:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/360/360.yaml"
+    path: ./ruleset/360.yaml
+    interval: 86400
+  36kr:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/36kr/36kr.yaml"
+    path: ./ruleset/36kr.yaml
+    interval: 86400
+  3Type:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/3Type/3Type.yaml"
+    path: ./ruleset/3Type.yaml
+    interval: 86400
+  3dm:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/3dm/3dm.yaml"
+    path: ./ruleset/3dm.yaml
+    interval: 86400
+  4399:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/4399/4399.yaml"
+    path: ./ruleset/4399.yaml
+    interval: 86400
+  4Paradigm:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/4Paradigm/4Paradigm.yaml"
+    path: ./ruleset/4Paradigm.yaml
+    interval: 86400
+  4chan:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/4chan/4chan.yaml"
+    path: ./ruleset/4chan.yaml
+    interval: 86400
+  51Job:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/51Job/51Job.yaml"
+    path: ./ruleset/51Job.yaml
+    interval: 86400
+  51nod:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/51nod/51nod.yaml"
+    path: ./ruleset/51nod.yaml
+    interval: 86400
+  56:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/56/56.yaml"
+    path: ./ruleset/56.yaml
+    interval: 86400
+  58TongCheng:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/58TongCheng/58TongCheng.yaml"
+    path: ./ruleset/58TongCheng.yaml
+    interval: 86400
+  6JianFang:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/6JianFang/6JianFang.yaml"
+    path: ./ruleset/6JianFang.yaml
+    interval: 86400
+  6park:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/6park/6park.yaml"
+    path: ./ruleset/6park.yaml
+    interval: 86400
+  8btc:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/8btc/8btc.yaml"
+    path: ./ruleset/8btc.yaml
+    interval: 86400
+  9News:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/9News/9News.yaml"
+    path: ./ruleset/9News.yaml
+    interval: 86400
+  9to5:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/9to5/9to5.yaml"
+    path: ./ruleset/9to5.yaml
+    interval: 86400
+  ABC:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/ABC/ABC.yaml"
+    path: ./ruleset/ABC.yaml
+    interval: 86400
+  AFP:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/AFP/AFP.yaml"
+    path: ./ruleset/AFP.yaml
+    interval: 86400
+  ALJazeera:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/ALJazeera/ALJazeera.yaml"
+    path: ./ruleset/ALJazeera.yaml
+    interval: 86400
+  AMD:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/AMD/AMD.yaml"
+    path: ./ruleset/AMD.yaml
+    interval: 86400
+  AMP:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/AMP/AMP.yaml"
+    path: ./ruleset/AMP.yaml
+    interval: 86400
+  AOL:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/AOL/AOL.yaml"
+    path: ./ruleset/AOL.yaml
+    interval: 86400
+  APKCombo:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/APKCombo/APKCombo.yaml"
+    path: ./ruleset/APKCombo.yaml
+    interval: 86400
+  ATTWatchTV:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/ATTWatchTV/ATTWatchTV.yaml"
+    path: ./ruleset/ATTWatchTV.yaml
+    interval: 86400
+  Abema:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Abema/Abema.yaml"
+    path: ./ruleset/Abema.yaml
+    interval: 86400
+  AbemaTV:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/AbemaTV/AbemaTV.yaml"
+    path: ./ruleset/AbemaTV.yaml
+    interval: 86400
+  AcFun:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/AcFun/AcFun.yaml"
+    path: ./ruleset/AcFun.yaml
+    interval: 86400
+  Accuweather:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Accuweather/Accuweather.yaml"
+    path: ./ruleset/Accuweather.yaml
+    interval: 86400
+  Acer:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Acer/Acer.yaml"
+    path: ./ruleset/Acer.yaml
+    interval: 86400
+  Acplay:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Acplay/Acplay.yaml"
+    path: ./ruleset/Acplay.yaml
+    interval: 86400
+  Actalis:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Actalis/Actalis.yaml"
+    path: ./ruleset/Actalis.yaml
+    interval: 86400
+  AdColony:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/AdColony/AdColony.yaml"
+    path: ./ruleset/AdColony.yaml
+    interval: 86400
+  AdGuardSDNSFilter:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/AdGuardSDNSFilter/AdGuardSDNSFilter.yaml"
+    path: ./ruleset/AdGuardSDNSFilter.yaml
+    interval: 86400
+  AddToAny:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/AddToAny/AddToAny.yaml"
+    path: ./ruleset/AddToAny.yaml
+    interval: 86400
+  Addthis:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Addthis/Addthis.yaml"
+    path: ./ruleset/Addthis.yaml
+    interval: 86400
+  Adidas:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Adidas/Adidas.yaml"
+    path: ./ruleset/Adidas.yaml
+    interval: 86400
+  Adobe:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Adobe/Adobe.yaml"
+    path: ./ruleset/Adobe.yaml
+    interval: 86400
+  AdobeActivation:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/AdobeActivation/AdobeActivation.yaml"
+    path: ./ruleset/AdobeActivation.yaml
+    interval: 86400
+  Advertising:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Advertising/Advertising.yaml"
+    path: ./ruleset/Advertising.yaml
+    interval: 86400
+  AdvertisingLite:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/AdvertisingLite/AdvertisingLite.yaml"
+    path: ./ruleset/AdvertisingLite.yaml
+    interval: 86400
+  AdvertisingMiTV:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/AdvertisingMiTV/AdvertisingMiTV.yaml"
+    path: ./ruleset/AdvertisingMiTV.yaml
+    interval: 86400
+  AdvertisingTest:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/AdvertisingTest/AdvertisingTest.yaml"
+    path: ./ruleset/AdvertisingTest.yaml
+    interval: 86400
+  Aerogard:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Aerogard/Aerogard.yaml"
+    path: ./ruleset/Aerogard.yaml
+    interval: 86400
+  Afdian:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Afdian/Afdian.yaml"
+    path: ./ruleset/Afdian.yaml
+    interval: 86400
+  Agora:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Agora/Agora.yaml"
+    path: ./ruleset/Agora.yaml
+    interval: 86400
+  AiQiCha:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/AiQiCha/AiQiCha.yaml"
+    path: ./ruleset/AiQiCha.yaml
+    interval: 86400
+  AirChina:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/AirChina/AirChina.yaml"
+    path: ./ruleset/AirChina.yaml
+    interval: 86400
+  AirWick:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/AirWick/AirWick.yaml"
+    path: ./ruleset/AirWick.yaml
+    interval: 86400
+  Akamai:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Akamai/Akamai.yaml"
+    path: ./ruleset/Akamai.yaml
+    interval: 86400
+  Ali213:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Ali213/Ali213.yaml"
+    path: ./ruleset/Ali213.yaml
+    interval: 86400
+  AliPay:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/AliPay/AliPay.yaml"
+    path: ./ruleset/AliPay.yaml
+    interval: 86400
+  Alibaba:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Alibaba/Alibaba.yaml"
+    path: ./ruleset/Alibaba.yaml
+    interval: 86400
+  All4:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/All4/All4.yaml"
+    path: ./ruleset/All4.yaml
+    interval: 86400
+  Amazon:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Amazon/Amazon.yaml"
+    path: ./ruleset/Amazon.yaml
+    interval: 86400
+  AmazonCN:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/AmazonCN/AmazonCN.yaml"
+    path: ./ruleset/AmazonCN.yaml
+    interval: 86400
+  AmazonIP:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/AmazonIP/AmazonIP.yaml"
+    path: ./ruleset/AmazonIP.yaml
+    interval: 86400
+  AmazonPrimeVideo:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/AmazonPrimeVideo/AmazonPrimeVideo.yaml"
+    path: ./ruleset/AmazonPrimeVideo.yaml
+    interval: 86400
+  AmazonTrust:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/AmazonTrust/AmazonTrust.yaml"
+    path: ./ruleset/AmazonTrust.yaml
+    interval: 86400
+  Americasvoice:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Americasvoice/Americasvoice.yaml"
+    path: ./ruleset/Americasvoice.yaml
+    interval: 86400
+  AnTianKeJi:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/AnTianKeJi/AnTianKeJi.yaml"
+    path: ./ruleset/AnTianKeJi.yaml
+    interval: 86400
+  Anaconda:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Anaconda/Anaconda.yaml"
+    path: ./ruleset/Anaconda.yaml
+    interval: 86400
+  AnandTech:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/AnandTech/AnandTech.yaml"
+    path: ./ruleset/AnandTech.yaml
+    interval: 86400
+  Android:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Android/Android.yaml"
+    path: ./ruleset/Android.yaml
+    interval: 86400
+  Anime:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Anime/Anime.yaml"
+    path: ./ruleset/Anime.yaml
+    interval: 86400
+  Anjuke:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Anjuke/Anjuke.yaml"
+    path: ./ruleset/Anjuke.yaml
+    interval: 86400
+  Anonv:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Anonv/Anonv.yaml"
+    path: ./ruleset/Anonv.yaml
+    interval: 86400
+  Anthropic:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Anthropic/Anthropic.yaml"
+    path: ./ruleset/Anthropic.yaml
+    interval: 86400
+  Antutu:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Antutu/Antutu.yaml"
+    path: ./ruleset/Antutu.yaml
+    interval: 86400
+  Apifox:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Apifox/Apifox.yaml"
+    path: ./ruleset/Apifox.yaml
+    interval: 86400
+  Apkpure:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Apkpure/Apkpure.yaml"
+    path: ./ruleset/Apkpure.yaml
+    interval: 86400
+  AppLovin:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/AppLovin/AppLovin.yaml"
+    path: ./ruleset/AppLovin.yaml
+    interval: 86400
+  AppStore:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/AppStore/AppStore.yaml"
+    path: ./ruleset/AppStore.yaml
+    interval: 86400
+  Apple:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Apple/Apple.yaml"
+    path: ./ruleset/Apple.yaml
+    interval: 86400
+  AppleDaily:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/AppleDaily/AppleDaily.yaml"
+    path: ./ruleset/AppleDaily.yaml
+    interval: 86400
+  AppleDev:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/AppleDev/AppleDev.yaml"
+    path: ./ruleset/AppleDev.yaml
+    interval: 86400
+  AppleFirmware:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/AppleFirmware/AppleFirmware.yaml"
+    path: ./ruleset/AppleFirmware.yaml
+    interval: 86400
+  AppleHardware:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/AppleHardware/AppleHardware.yaml"
+    path: ./ruleset/AppleHardware.yaml
+    interval: 86400
+  AppleID:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/AppleID/AppleID.yaml"
+    path: ./ruleset/AppleID.yaml
+    interval: 86400
+  AppleMail:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/AppleMail/AppleMail.yaml"
+    path: ./ruleset/AppleMail.yaml
+    interval: 86400
+  AppleMedia:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/AppleMedia/AppleMedia.yaml"
+    path: ./ruleset/AppleMedia.yaml
+    interval: 86400
+  AppleMusic:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/AppleMusic/AppleMusic.yaml"
+    path: ./ruleset/AppleMusic.yaml
+    interval: 86400
+  AppleNews:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/AppleNews/AppleNews.yaml"
+    path: ./ruleset/AppleNews.yaml
+    interval: 86400
+  AppleProxy:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/AppleProxy/AppleProxy.yaml"
+    path: ./ruleset/AppleProxy.yaml
+    interval: 86400
+  AppleTV:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/AppleTV/AppleTV.yaml"
+    path: ./ruleset/AppleTV.yaml
+    interval: 86400
+  Arphic:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Arphic/Arphic.yaml"
+    path: ./ruleset/Arphic.yaml
+    interval: 86400
+  Asahi:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Asahi/Asahi.yaml"
+    path: ./ruleset/Asahi.yaml
+    interval: 86400
+  AsianMedia:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/AsianMedia/AsianMedia.yaml"
+    path: ./ruleset/AsianMedia.yaml
+    interval: 86400
+  Assassin'sCreed:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Assassin'sCreed/Assassin'sCreed.yaml"
+    path: ./ruleset/Assassin'sCreed.yaml
+    interval: 86400
+  Atlassian:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Atlassian/Atlassian.yaml"
+    path: ./ruleset/Atlassian.yaml
+    interval: 86400
+  Atomdata:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Atomdata/Atomdata.yaml"
+    path: ./ruleset/Atomdata.yaml
+    interval: 86400
+  BBC:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/BBC/BBC.yaml"
+    path: ./ruleset/BBC.yaml
+    interval: 86400
+  BMW:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/BMW/BMW.yaml"
+    path: ./ruleset/BMW.yaml
+    interval: 86400
+  BOC:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/BOC/BOC.yaml"
+    path: ./ruleset/BOC.yaml
+    interval: 86400
+  BOCOM:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/BOCOM/BOCOM.yaml"
+    path: ./ruleset/BOCOM.yaml
+    interval: 86400
+  Bahamut:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Bahamut/Bahamut.yaml"
+    path: ./ruleset/Bahamut.yaml
+    interval: 86400
+  BaiDuTieBa:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/BaiDuTieBa/BaiDuTieBa.yaml"
+    path: ./ruleset/BaiDuTieBa.yaml
+    interval: 86400
+  BaiFenDian:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/BaiFenDian/BaiFenDian.yaml"
+    path: ./ruleset/BaiFenDian.yaml
+    interval: 86400
+  BaiShanYunKeJi:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/BaiShanYunKeJi/BaiShanYunKeJi.yaml"
+    path: ./ruleset/BaiShanYunKeJi.yaml
+    interval: 86400
+  Baidu:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Baidu/Baidu.yaml"
+    path: ./ruleset/Baidu.yaml
+    interval: 86400
+  BaoFengYingYin:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/BaoFengYingYin/BaoFengYingYin.yaml"
+    path: ./ruleset/BaoFengYingYin.yaml
+    interval: 86400
+  BardAI:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/BardAI/BardAI.yaml"
+    path: ./ruleset/BardAI.yaml
+    interval: 86400
+  Battle:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Battle/Battle.yaml"
+    path: ./ruleset/Battle.yaml
+    interval: 86400
+  BeStore:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/BeStore/BeStore.yaml"
+    path: ./ruleset/BeStore.yaml
+    interval: 86400
+  Beats:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Beats/Beats.yaml"
+    path: ./ruleset/Beats.yaml
+    interval: 86400
+  BesTV:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/BesTV/BesTV.yaml"
+    path: ./ruleset/BesTV.yaml
+    interval: 86400
+  Bestbuy:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Bestbuy/Bestbuy.yaml"
+    path: ./ruleset/Bestbuy.yaml
+    interval: 86400
+  BianFeng:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/BianFeng/BianFeng.yaml"
+    path: ./ruleset/BianFeng.yaml
+    interval: 86400
+  BiliBili:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/BiliBili/BiliBili.yaml"
+    path: ./ruleset/BiliBili.yaml
+    interval: 86400
+  BiliBiliIntl:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/BiliBiliIntl/BiliBiliIntl.yaml"
+    path: ./ruleset/BiliBiliIntl.yaml
+    interval: 86400
+  Binance:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Binance/Binance.yaml"
+    path: ./ruleset/Binance.yaml
+    interval: 86400
+  Bing:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Bing/Bing.yaml"
+    path: ./ruleset/Bing.yaml
+    interval: 86400
+  Blizzard:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Blizzard/Blizzard.yaml"
+    path: ./ruleset/Blizzard.yaml
+    interval: 86400
+  BlockHttpDNS:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/BlockHttpDNS/BlockHttpDNS.yaml"
+    path: ./ruleset/BlockHttpDNS.yaml
+    interval: 86400
+  Bloomberg:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Bloomberg/Bloomberg.yaml"
+    path: ./ruleset/Bloomberg.yaml
+    interval: 86400
+  Blued:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Blued/Blued.yaml"
+    path: ./ruleset/Blued.yaml
+    interval: 86400
+  BoXun:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/BoXun/BoXun.yaml"
+    path: ./ruleset/BoXun.yaml
+    interval: 86400
+  Bootcss:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Bootcss/Bootcss.yaml"
+    path: ./ruleset/Bootcss.yaml
+    interval: 86400
+  BrightCove:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/BrightCove/BrightCove.yaml"
+    path: ./ruleset/BrightCove.yaml
+    interval: 86400
+  BritboxUK:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/BritboxUK/BritboxUK.yaml"
+    path: ./ruleset/BritboxUK.yaml
+    interval: 86400
+  Buypass:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Buypass/Buypass.yaml"
+    path: ./ruleset/Buypass.yaml
+    interval: 86400
+  ByteDance:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/ByteDance/ByteDance.yaml"
+    path: ./ruleset/ByteDance.yaml
+    interval: 86400
+  CAS:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/CAS/CAS.yaml"
+    path: ./ruleset/CAS.yaml
+    interval: 86400
+  CBS:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/CBS/CBS.yaml"
+    path: ./ruleset/CBS.yaml
+    interval: 86400
+  CCB:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/CCB/CCB.yaml"
+    path: ./ruleset/CCB.yaml
+    interval: 86400
+  CCTV:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/CCTV/CCTV.yaml"
+    path: ./ruleset/CCTV.yaml
+    interval: 86400
+  CEB:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/CEB/CEB.yaml"
+    path: ./ruleset/CEB.yaml
+    interval: 86400
+  CETV:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/CETV/CETV.yaml"
+    path: ./ruleset/CETV.yaml
+    interval: 86400
+  CGB:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/CGB/CGB.yaml"
+    path: ./ruleset/CGB.yaml
+    interval: 86400
+  CHT:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/CHT/CHT.yaml"
+    path: ./ruleset/CHT.yaml
+    interval: 86400
+  CIBN:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/CIBN/CIBN.yaml"
+    path: ./ruleset/CIBN.yaml
+    interval: 86400
+  CKJR:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/CKJR/CKJR.yaml"
+    path: ./ruleset/CKJR.yaml
+    interval: 86400
+  CMB:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/CMB/CMB.yaml"
+    path: ./ruleset/CMB.yaml
+    interval: 86400
+  CNKI:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/CNKI/CNKI.yaml"
+    path: ./ruleset/CNKI.yaml
+    interval: 86400
+  CNN:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/CNN/CNN.yaml"
+    path: ./ruleset/CNN.yaml
+    interval: 86400
+  CNNIC:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/CNNIC/CNNIC.yaml"
+    path: ./ruleset/CNNIC.yaml
+    interval: 86400
+  CSDN:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/CSDN/CSDN.yaml"
+    path: ./ruleset/CSDN.yaml
+    interval: 86400
+  CWSeed:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/CWSeed/CWSeed.yaml"
+    path: ./ruleset/CWSeed.yaml
+    interval: 86400
+  CableTV:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/CableTV/CableTV.yaml"
+    path: ./ruleset/CableTV.yaml
+    interval: 86400
+  CaiNiao:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/CaiNiao/CaiNiao.yaml"
+    path: ./ruleset/CaiNiao.yaml
+    interval: 86400
+  CaiXinChuanMei:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/CaiXinChuanMei/CaiXinChuanMei.yaml"
+    path: ./ruleset/CaiXinChuanMei.yaml
+    interval: 86400
+  Cake:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Cake/Cake.yaml"
+    path: ./ruleset/Cake.yaml
+    interval: 86400
+  Camera360:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Camera360/Camera360.yaml"
+    path: ./ruleset/Camera360.yaml
+    interval: 86400
+  Canon:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Canon/Canon.yaml"
+    path: ./ruleset/Canon.yaml
+    interval: 86400
+  ChengTongWangPan:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/ChengTongWangPan/ChengTongWangPan.yaml"
+    path: ./ruleset/ChengTongWangPan.yaml
+    interval: 86400
+  China:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/China/China.yaml"
+    path: ./ruleset/China.yaml
+    interval: 86400
+  ChinaDNS:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/ChinaDNS/ChinaDNS.yaml"
+    path: ./ruleset/ChinaDNS.yaml
+    interval: 86400
+  ChinaIPs:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/ChinaIPs/ChinaIPs.yaml"
+    path: ./ruleset/ChinaIPs.yaml
+    interval: 86400
+  ChinaIPsBGP:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/ChinaIPsBGP/ChinaIPsBGP.yaml"
+    path: ./ruleset/ChinaIPsBGP.yaml
+    interval: 86400
+  ChinaMax:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/ChinaMax/ChinaMax.yaml"
+    path: ./ruleset/ChinaMax.yaml
+    interval: 86400
+  ChinaMaxNoIP:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/ChinaMaxNoIP/ChinaMaxNoIP.yaml"
+    path: ./ruleset/ChinaMaxNoIP.yaml
+    interval: 86400
+  ChinaMaxNoMedia:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/ChinaMaxNoMedia/ChinaMaxNoMedia.yaml"
+    path: ./ruleset/ChinaMaxNoMedia.yaml
+    interval: 86400
+  ChinaMedia:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/ChinaMedia/ChinaMedia.yaml"
+    path: ./ruleset/ChinaMedia.yaml
+    interval: 86400
+  ChinaMobile:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/ChinaMobile/ChinaMobile.yaml"
+    path: ./ruleset/ChinaMobile.yaml
+    interval: 86400
+  ChinaNews:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/ChinaNews/ChinaNews.yaml"
+    path: ./ruleset/ChinaNews.yaml
+    interval: 86400
+  ChinaNoMedia:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/ChinaNoMedia/ChinaNoMedia.yaml"
+    path: ./ruleset/ChinaNoMedia.yaml
+    interval: 86400
+  ChinaTelecom:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/ChinaTelecom/ChinaTelecom.yaml"
+    path: ./ruleset/ChinaTelecom.yaml
+    interval: 86400
+  ChinaTest:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/ChinaTest/ChinaTest.yaml"
+    path: ./ruleset/ChinaTest.yaml
+    interval: 86400
+  ChinaUnicom:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/ChinaUnicom/ChinaUnicom.yaml"
+    path: ./ruleset/ChinaUnicom.yaml
+    interval: 86400
+  Chromecast:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Chromecast/Chromecast.yaml"
+    path: ./ruleset/Chromecast.yaml
+    interval: 86400
+  ChuangKeTie:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/ChuangKeTie/ChuangKeTie.yaml"
+    path: ./ruleset/ChuangKeTie.yaml
+    interval: 86400
+  ChunYou:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/ChunYou/ChunYou.yaml"
+    path: ./ruleset/ChunYou.yaml
+    interval: 86400
+  Cisco:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Cisco/Cisco.yaml"
+    path: ./ruleset/Cisco.yaml
+    interval: 86400
+  Civitai:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Civitai/Civitai.yaml"
+    path: ./ruleset/Civitai.yaml
+    interval: 86400
+  Classic:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Classic/Classic.yaml"
+    path: ./ruleset/Classic.yaml
+    interval: 86400
+  Claude:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Claude/Claude.yaml"
+    path: ./ruleset/Claude.yaml
+    interval: 86400
+  Cloud:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Cloud/Cloud.yaml"
+    path: ./ruleset/Cloud.yaml
+    interval: 86400
+  Cloudflare:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Cloudflare/Cloudflare.yaml"
+    path: ./ruleset/Cloudflare.yaml
+    interval: 86400
+  Cloudflarecn:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Cloudflarecn/Cloudflarecn.yaml"
+    path: ./ruleset/Cloudflarecn.yaml
+    interval: 86400
+  Clubhouse:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Clubhouse/Clubhouse.yaml"
+    path: ./ruleset/Clubhouse.yaml
+    interval: 86400
+  ClubhouseIP:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/ClubhouseIP/ClubhouseIP.yaml"
+    path: ./ruleset/ClubhouseIP.yaml
+    interval: 86400
+  Cnet:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Cnet/Cnet.yaml"
+    path: ./ruleset/Cnet.yaml
+    interval: 86400
+  Collabora:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Collabora/Collabora.yaml"
+    path: ./ruleset/Collabora.yaml
+    interval: 86400
+  Comodo:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Comodo/Comodo.yaml"
+    path: ./ruleset/Comodo.yaml
+    interval: 86400
+  Contentful:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Contentful/Contentful.yaml"
+    path: ./ruleset/Contentful.yaml
+    interval: 86400
+  Coolapk:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Coolapk/Coolapk.yaml"
+    path: ./ruleset/Coolapk.yaml
+    interval: 86400
+  Copilot:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Copilot/Copilot.yaml"
+    path: ./ruleset/Copilot.yaml
+    interval: 86400
+  Crypto:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Crypto/Crypto.yaml"
+    path: ./ruleset/Crypto.yaml
+    interval: 86400
+  Cryptocurrency:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Cryptocurrency/Cryptocurrency.yaml"
+    path: ./ruleset/Cryptocurrency.yaml
+    interval: 86400
+  CyberTrust:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/CyberTrust/CyberTrust.yaml"
+    path: ./ruleset/CyberTrust.yaml
+    interval: 86400
+  DAZN:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/DAZN/DAZN.yaml"
+    path: ./ruleset/DAZN.yaml
+    interval: 86400
+  DMM:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/DMM/DMM.yaml"
+    path: ./ruleset/DMM.yaml
+    interval: 86400
+  DNS:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/DNS/DNS.yaml"
+    path: ./ruleset/DNS.yaml
+    interval: 86400
+  DaMai:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/DaMai/DaMai.yaml"
+    path: ./ruleset/DaMai.yaml
+    interval: 86400
+  Dailymail:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Dailymail/Dailymail.yaml"
+    path: ./ruleset/Dailymail.yaml
+    interval: 86400
+  Dailymotion:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Dailymotion/Dailymotion.yaml"
+    path: ./ruleset/Dailymotion.yaml
+    interval: 86400
+  DanDanZan:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/DanDanZan/DanDanZan.yaml"
+    path: ./ruleset/DanDanZan.yaml
+    interval: 86400
+  Dandanplay:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Dandanplay/Dandanplay.yaml"
+    path: ./ruleset/Dandanplay.yaml
+    interval: 86400
+  DangDang:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/DangDang/DangDang.yaml"
+    path: ./ruleset/DangDang.yaml
+    interval: 86400
+  Dedao:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Dedao/Dedao.yaml"
+    path: ./ruleset/Dedao.yaml
+    interval: 86400
+  Deepin:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Deepin/Deepin.yaml"
+    path: ./ruleset/Deepin.yaml
+    interval: 86400
+  Deezer:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Deezer/Deezer.yaml"
+    path: ./ruleset/Deezer.yaml
+    interval: 86400
+  Dell:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Dell/Dell.yaml"
+    path: ./ruleset/Dell.yaml
+    interval: 86400
+  Developer:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Developer/Developer.yaml"
+    path: ./ruleset/Developer.yaml
+    interval: 86400
+  DiDi:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/DiDi/DiDi.yaml"
+    path: ./ruleset/DiDi.yaml
+    interval: 86400
+  DiLianWangLuo:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/DiLianWangLuo/DiLianWangLuo.yaml"
+    path: ./ruleset/DiLianWangLuo.yaml
+    interval: 86400
+  DiSiFanShi:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/DiSiFanShi/DiSiFanShi.yaml"
+    path: ./ruleset/DiSiFanShi.yaml
+    interval: 86400
+  DiabloIII:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/DiabloIII/DiabloIII.yaml"
+    path: ./ruleset/DiabloIII.yaml
+    interval: 86400
+  DianCeWangKe:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/DianCeWangKe/DianCeWangKe.yaml"
+    path: ./ruleset/DianCeWangKe.yaml
+    interval: 86400
+  DigiCert:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/DigiCert/DigiCert.yaml"
+    path: ./ruleset/DigiCert.yaml
+    interval: 86400
+  DigitalOcean:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/DigitalOcean/DigitalOcean.yaml"
+    path: ./ruleset/DigitalOcean.yaml
+    interval: 86400
+  DingTalk:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/DingTalk/DingTalk.yaml"
+    path: ./ruleset/DingTalk.yaml
+    interval: 86400
+  DingXiangYuan:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/DingXiangYuan/DingXiangYuan.yaml"
+    path: ./ruleset/DingXiangYuan.yaml
+    interval: 86400
+  Direct:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Direct/Direct.yaml"
+    path: ./ruleset/Direct.yaml
+    interval: 86400
+  Discord:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Discord/Discord.yaml"
+    path: ./ruleset/Discord.yaml
+    interval: 86400
+  DiscoveryPlus:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/DiscoveryPlus/DiscoveryPlus.yaml"
+    path: ./ruleset/DiscoveryPlus.yaml
+    interval: 86400
+  Disney:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Disney/Disney.yaml"
+    path: ./ruleset/Disney.yaml
+    interval: 86400
+  Disqus:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Disqus/Disqus.yaml"
+    path: ./ruleset/Disqus.yaml
+    interval: 86400
+  Docker:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Docker/Docker.yaml"
+    path: ./ruleset/Docker.yaml
+    interval: 86400
+  Domob:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Domob/Domob.yaml"
+    path: ./ruleset/Domob.yaml
+    interval: 86400
+  Dood:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Dood/Dood.yaml"
+    path: ./ruleset/Dood.yaml
+    interval: 86400
+  DouBan:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/DouBan/DouBan.yaml"
+    path: ./ruleset/DouBan.yaml
+    interval: 86400
+  DouYin:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/DouYin/DouYin.yaml"
+    path: ./ruleset/DouYin.yaml
+    interval: 86400
+  Douyu:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Douyu/Douyu.yaml"
+    path: ./ruleset/Douyu.yaml
+    interval: 86400
+  Download:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Download/Download.yaml"
+    path: ./ruleset/Download.yaml
+    interval: 86400
+  Dropbox:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Dropbox/Dropbox.yaml"
+    path: ./ruleset/Dropbox.yaml
+    interval: 86400
+  DtDNS:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/DtDNS/DtDNS.yaml"
+    path: ./ruleset/DtDNS.yaml
+    interval: 86400
+  Dubox:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Dubox/Dubox.yaml"
+    path: ./ruleset/Dubox.yaml
+    interval: 86400
+  Duckduckgo:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Duckduckgo/Duckduckgo.yaml"
+    path: ./ruleset/Duckduckgo.yaml
+    interval: 86400
+  DuoWan:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/DuoWan/DuoWan.yaml"
+    path: ./ruleset/DuoWan.yaml
+    interval: 86400
+  Duolingo:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Duolingo/Duolingo.yaml"
+    path: ./ruleset/Duolingo.yaml
+    interval: 86400
+  DynDNS:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/DynDNS/DynDNS.yaml"
+    path: ./ruleset/DynDNS.yaml
+    interval: 86400
+  Dynu:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Dynu/Dynu.yaml"
+    path: ./ruleset/Dynu.yaml
+    interval: 86400
+  EA:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/EA/EA.yaml"
+    path: ./ruleset/EA.yaml
+    interval: 86400
+  EHGallery:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/EHGallery/EHGallery.yaml"
+    path: ./ruleset/EHGallery.yaml
+    interval: 86400
+  EastMoney:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/EastMoney/EastMoney.yaml"
+    path: ./ruleset/EastMoney.yaml
+    interval: 86400
+  EasyPrivacy:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/EasyPrivacy/EasyPrivacy.yaml"
+    path: ./ruleset/EasyPrivacy.yaml
+    interval: 86400
+  Electron:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Electron/Electron.yaml"
+    path: ./ruleset/Electron.yaml
+    interval: 86400
+  Eleme:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Eleme/Eleme.yaml"
+    path: ./ruleset/Eleme.yaml
+    interval: 86400
+  Embl:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Embl/Embl.yaml"
+    path: ./ruleset/Embl.yaml
+    interval: 86400
+  Emby:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Emby/Emby.yaml"
+    path: ./ruleset/Emby.yaml
+    interval: 86400
+  Emojipedia:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Emojipedia/Emojipedia.yaml"
+    path: ./ruleset/Emojipedia.yaml
+    interval: 86400
+  EncoreTVB:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/EncoreTVB/EncoreTVB.yaml"
+    path: ./ruleset/EncoreTVB.yaml
+    interval: 86400
+  Entrust:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Entrust/Entrust.yaml"
+    path: ./ruleset/Entrust.yaml
+    interval: 86400
+  Epic:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Epic/Epic.yaml"
+    path: ./ruleset/Epic.yaml
+    interval: 86400
+  Espn:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Espn/Espn.yaml"
+    path: ./ruleset/Espn.yaml
+    interval: 86400
+  FOXNOW:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/FOXNOW/FOXNOW.yaml"
+    path: ./ruleset/FOXNOW.yaml
+    interval: 86400
+  FOXPlus:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/FOXPlus/FOXPlus.yaml"
+    path: ./ruleset/FOXPlus.yaml
+    interval: 86400
+  Facebook:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Facebook/Facebook.yaml"
+    path: ./ruleset/Facebook.yaml
+    interval: 86400
+  FanFou:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/FanFou/FanFou.yaml"
+    path: ./ruleset/FanFou.yaml
+    interval: 86400
+  FangZhengDianZi:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/FangZhengDianZi/FangZhengDianZi.yaml"
+    path: ./ruleset/FangZhengDianZi.yaml
+    interval: 86400
+  Faronics:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Faronics/Faronics.yaml"
+    path: ./ruleset/Faronics.yaml
+    interval: 86400
+  FeiZhu:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/FeiZhu/FeiZhu.yaml"
+    path: ./ruleset/FeiZhu.yaml
+    interval: 86400
+  FengHuangWang:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/FengHuangWang/FengHuangWang.yaml"
+    path: ./ruleset/FengHuangWang.yaml
+    interval: 86400
+  FengXiaWangLuo:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/FengXiaWangLuo/FengXiaWangLuo.yaml"
+    path: ./ruleset/FengXiaWangLuo.yaml
+    interval: 86400
+  Figma:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Figma/Figma.yaml"
+    path: ./ruleset/Figma.yaml
+    interval: 86400
+  Fiio:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Fiio/Fiio.yaml"
+    path: ./ruleset/Fiio.yaml
+    interval: 86400
+  FindMy:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/FindMy/FindMy.yaml"
+    path: ./ruleset/FindMy.yaml
+    interval: 86400
+  FitnessPlus:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/FitnessPlus/FitnessPlus.yaml"
+    path: ./ruleset/FitnessPlus.yaml
+    interval: 86400
+  FlipBoard:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/FlipBoard/FlipBoard.yaml"
+    path: ./ruleset/FlipBoard.yaml
+    interval: 86400
+  Flurry:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Flurry/Flurry.yaml"
+    path: ./ruleset/Flurry.yaml
+    interval: 86400
+  Fox:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Fox/Fox.yaml"
+    path: ./ruleset/Fox.yaml
+    interval: 86400
+  FreeCodeCamp:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/FreeCodeCamp/FreeCodeCamp.yaml"
+    path: ./ruleset/FreeCodeCamp.yaml
+    interval: 86400
+  FuboTV:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/FuboTV/FuboTV.yaml"
+    path: ./ruleset/FuboTV.yaml
+    interval: 86400
+  Funshion:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Funshion/Funshion.yaml"
+    path: ./ruleset/Funshion.yaml
+    interval: 86400
+  Game:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Game/Game.yaml"
+    path: ./ruleset/Game.yaml
+    interval: 86400
+  GaoDe:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/GaoDe/GaoDe.yaml"
+    path: ./ruleset/GaoDe.yaml
+    interval: 86400
+  Garena:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Garena/Garena.yaml"
+    path: ./ruleset/Garena.yaml
+    interval: 86400
+  Geely:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Geely/Geely.yaml"
+    path: ./ruleset/Geely.yaml
+    interval: 86400
+  Gemini:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Gemini/Gemini.yaml"
+    path: ./ruleset/Gemini.yaml
+    interval: 86400
+  Gettyimages:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Gettyimages/Gettyimages.yaml"
+    path: ./ruleset/Gettyimages.yaml
+    interval: 86400
+  Gigabyte:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Gigabyte/Gigabyte.yaml"
+    path: ./ruleset/Gigabyte.yaml
+    interval: 86400
+  GitBook:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/GitBook/GitBook.yaml"
+    path: ./ruleset/GitBook.yaml
+    interval: 86400
+  GitHub:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/GitHub/GitHub.yaml"
+    path: ./ruleset/GitHub.yaml
+    interval: 86400
+  GitLab:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/GitLab/GitLab.yaml"
+    path: ./ruleset/GitLab.yaml
+    interval: 86400
+  Gitee:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Gitee/Gitee.yaml"
+    path: ./ruleset/Gitee.yaml
+    interval: 86400
+  Global:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Global/Global.yaml"
+    path: ./ruleset/Global.yaml
+    interval: 86400
+  GlobalMedia:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/GlobalMedia/GlobalMedia.yaml"
+    path: ./ruleset/GlobalMedia.yaml
+    interval: 86400
+  GlobalScholar:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/GlobalScholar/GlobalScholar.yaml"
+    path: ./ruleset/GlobalScholar.yaml
+    interval: 86400
+  GlobalSign:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/GlobalSign/GlobalSign.yaml"
+    path: ./ruleset/GlobalSign.yaml
+    interval: 86400
+  Gog:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Gog/Gog.yaml"
+    path: ./ruleset/Gog.yaml
+    interval: 86400
+  Google:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Google/Google.yaml"
+    path: ./ruleset/Google.yaml
+    interval: 86400
+  GoogleDrive:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/GoogleDrive/GoogleDrive.yaml"
+    path: ./ruleset/GoogleDrive.yaml
+    interval: 86400
+  GoogleEarth:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/GoogleEarth/GoogleEarth.yaml"
+    path: ./ruleset/GoogleEarth.yaml
+    interval: 86400
+  GoogleFCM:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/GoogleFCM/GoogleFCM.yaml"
+    path: ./ruleset/GoogleFCM.yaml
+    interval: 86400
+  GoogleSearch:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/GoogleSearch/GoogleSearch.yaml"
+    path: ./ruleset/GoogleSearch.yaml
+    interval: 86400
+  GoogleVoice:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/GoogleVoice/GoogleVoice.yaml"
+    path: ./ruleset/GoogleVoice.yaml
+    interval: 86400
+  GovCN:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/GovCN/GovCN.yaml"
+    path: ./ruleset/GovCN.yaml
+    interval: 86400
+  Gucci:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Gucci/Gucci.yaml"
+    path: ./ruleset/Gucci.yaml
+    interval: 86400
+  GuiGuDongLi:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/GuiGuDongLi/GuiGuDongLi.yaml"
+    path: ./ruleset/GuiGuDongLi.yaml
+    interval: 86400
+  HBO:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/HBO/HBO.yaml"
+    path: ./ruleset/HBO.yaml
+    interval: 86400
+  HBOAsia:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/HBOAsia/HBOAsia.yaml"
+    path: ./ruleset/HBOAsia.yaml
+    interval: 86400
+  HBOHK:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/HBOHK/HBOHK.yaml"
+    path: ./ruleset/HBOHK.yaml
+    interval: 86400
+  HBOUSA:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/HBOUSA/HBOUSA.yaml"
+    path: ./ruleset/HBOUSA.yaml
+    interval: 86400
+  HKBN:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/HKBN/HKBN.yaml"
+    path: ./ruleset/HKBN.yaml
+    interval: 86400
+  HKOpenTV:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/HKOpenTV/HKOpenTV.yaml"
+    path: ./ruleset/HKOpenTV.yaml
+    interval: 86400
+  HKedcity:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/HKedcity/HKedcity.yaml"
+    path: ./ruleset/HKedcity.yaml
+    interval: 86400
+  HP:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/HP/HP.yaml"
+    path: ./ruleset/HP.yaml
+    interval: 86400
+  HWTV:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/HWTV/HWTV.yaml"
+    path: ./ruleset/HWTV.yaml
+    interval: 86400
+  HaiNanHangKong:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/HaiNanHangKong/HaiNanHangKong.yaml"
+    path: ./ruleset/HaiNanHangKong.yaml
+    interval: 86400
+  HamiVideo:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/HamiVideo/HamiVideo.yaml"
+    path: ./ruleset/HamiVideo.yaml
+    interval: 86400
+  HanYi:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/HanYi/HanYi.yaml"
+    path: ./ruleset/HanYi.yaml
+    interval: 86400
+  HashiCorp:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/HashiCorp/HashiCorp.yaml"
+    path: ./ruleset/HashiCorp.yaml
+    interval: 86400
+  Haveibeenpwned:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Haveibeenpwned/Haveibeenpwned.yaml"
+    path: ./ruleset/Haveibeenpwned.yaml
+    interval: 86400
+  HeMa:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/HeMa/HeMa.yaml"
+    path: ./ruleset/HeMa.yaml
+    interval: 86400
+  Hearthstone:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Hearthstone/Hearthstone.yaml"
+    path: ./ruleset/Hearthstone.yaml
+    interval: 86400
+  HeroesoftheStorm:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/HeroesoftheStorm/HeroesoftheStorm.yaml"
+    path: ./ruleset/HeroesoftheStorm.yaml
+    interval: 86400
+  Heroku:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Heroku/Heroku.yaml"
+    path: ./ruleset/Heroku.yaml
+    interval: 86400
+  HibyMusic:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/HibyMusic/HibyMusic.yaml"
+    path: ./ruleset/HibyMusic.yaml
+    interval: 86400
+  Hijacking:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Hijacking/Hijacking.yaml"
+    path: ./ruleset/Hijacking.yaml
+    interval: 86400
+  Himalaya:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Himalaya/Himalaya.yaml"
+    path: ./ruleset/Himalaya.yaml
+    interval: 86400
+  Hkgolden:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Hkgolden/Hkgolden.yaml"
+    path: ./ruleset/Hkgolden.yaml
+    interval: 86400
+  HoYoverse:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/HoYoverse/HoYoverse.yaml"
+    path: ./ruleset/HoYoverse.yaml
+    interval: 86400
+  Hpplay:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Hpplay/Hpplay.yaml"
+    path: ./ruleset/Hpplay.yaml
+    interval: 86400
+  HuYa:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/HuYa/HuYa.yaml"
+    path: ./ruleset/HuYa.yaml
+    interval: 86400
+  HuaShuTV:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/HuaShuTV/HuaShuTV.yaml"
+    path: ./ruleset/HuaShuTV.yaml
+    interval: 86400
+  HuanJu:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/HuanJu/HuanJu.yaml"
+    path: ./ruleset/HuanJu.yaml
+    interval: 86400
+  Huawei:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Huawei/Huawei.yaml"
+    path: ./ruleset/Huawei.yaml
+    interval: 86400
+  Huffpost:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Huffpost/Huffpost.yaml"
+    path: ./ruleset/Huffpost.yaml
+    interval: 86400
+  Hulu:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Hulu/Hulu.yaml"
+    path: ./ruleset/Hulu.yaml
+    interval: 86400
+  HuluJP:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/HuluJP/HuluJP.yaml"
+    path: ./ruleset/HuluJP.yaml
+    interval: 86400
+  HuluUSA:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/HuluUSA/HuluUSA.yaml"
+    path: ./ruleset/HuluUSA.yaml
+    interval: 86400
+  HunanTV:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/HunanTV/HunanTV.yaml"
+    path: ./ruleset/HunanTV.yaml
+    interval: 86400
+  Hupu:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Hupu/Hupu.yaml"
+    path: ./ruleset/Hupu.yaml
+    interval: 86400
+  IBM:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/IBM/IBM.yaml"
+    path: ./ruleset/IBM.yaml
+    interval: 86400
+  ICBC:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/ICBC/ICBC.yaml"
+    path: ./ruleset/ICBC.yaml
+    interval: 86400
+  IKEA:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/IKEA/IKEA.yaml"
+    path: ./ruleset/IKEA.yaml
+    interval: 86400
+  IMDB:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/IMDB/IMDB.yaml"
+    path: ./ruleset/IMDB.yaml
+    interval: 86400
+  IPTVMainland:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/IPTVMainland/IPTVMainland.yaml"
+    path: ./ruleset/IPTVMainland.yaml
+    interval: 86400
+  IPTVOther:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/IPTVOther/IPTVOther.yaml"
+    path: ./ruleset/IPTVOther.yaml
+    interval: 86400
+  ITV:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/ITV/ITV.yaml"
+    path: ./ruleset/ITV.yaml
+    interval: 86400
+  Identrust:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Identrust/Identrust.yaml"
+    path: ./ruleset/Identrust.yaml
+    interval: 86400
+  Imgur:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Imgur/Imgur.yaml"
+    path: ./ruleset/Imgur.yaml
+    interval: 86400
+  Instagram:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Instagram/Instagram.yaml"
+    path: ./ruleset/Instagram.yaml
+    interval: 86400
+  Intel:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Intel/Intel.yaml"
+    path: ./ruleset/Intel.yaml
+    interval: 86400
+  Intercom:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Intercom/Intercom.yaml"
+    path: ./ruleset/Intercom.yaml
+    interval: 86400
+  JOOX:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/JOOX/JOOX.yaml"
+    path: ./ruleset/JOOX.yaml
+    interval: 86400
+  Japonx:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Japonx/Japonx.yaml"
+    path: ./ruleset/Japonx.yaml
+    interval: 86400
+  Jetbrains:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Jetbrains/Jetbrains.yaml"
+    path: ./ruleset/Jetbrains.yaml
+    interval: 86400
+  Jfrog:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Jfrog/Jfrog.yaml"
+    path: ./ruleset/Jfrog.yaml
+    interval: 86400
+  JiGuangTuiSong:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/JiGuangTuiSong/JiGuangTuiSong.yaml"
+    path: ./ruleset/JiGuangTuiSong.yaml
+    interval: 86400
+  JianGuoYun:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/JianGuoYun/JianGuoYun.yaml"
+    path: ./ruleset/JianGuoYun.yaml
+    interval: 86400
+  JianShu:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/JianShu/JianShu.yaml"
+    path: ./ruleset/JianShu.yaml
+    interval: 86400
+  JinJiangWenXue:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/JinJiangWenXue/JinJiangWenXue.yaml"
+    path: ./ruleset/JinJiangWenXue.yaml
+    interval: 86400
+  JingDong:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/JingDong/JingDong.yaml"
+    path: ./ruleset/JingDong.yaml
+    interval: 86400
+  Jquery:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Jquery/Jquery.yaml"
+    path: ./ruleset/Jquery.yaml
+    interval: 86400
+  Jsdelivr:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Jsdelivr/Jsdelivr.yaml"
+    path: ./ruleset/Jsdelivr.yaml
+    interval: 86400
+  JueJin:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/JueJin/JueJin.yaml"
+    path: ./ruleset/JueJin.yaml
+    interval: 86400
+  Jwplayer:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Jwplayer/Jwplayer.yaml"
+    path: ./ruleset/Jwplayer.yaml
+    interval: 86400
+  KKBOX:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/KKBOX/KKBOX.yaml"
+    path: ./ruleset/KKBOX.yaml
+    interval: 86400
+  KKTV:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/KKTV/KKTV.yaml"
+    path: ./ruleset/KKTV.yaml
+    interval: 86400
+  KakaoTalk:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/KakaoTalk/KakaoTalk.yaml"
+    path: ./ruleset/KakaoTalk.yaml
+    interval: 86400
+  Kantv:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Kantv/Kantv.yaml"
+    path: ./ruleset/Kantv.yaml
+    interval: 86400
+  Keep:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Keep/Keep.yaml"
+    path: ./ruleset/Keep.yaml
+    interval: 86400
+  KingSmith:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/KingSmith/KingSmith.yaml"
+    path: ./ruleset/KingSmith.yaml
+    interval: 86400
+  Kingsoft:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Kingsoft/Kingsoft.yaml"
+    path: ./ruleset/Kingsoft.yaml
+    interval: 86400
+  KouDaiShiShang:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/KouDaiShiShang/KouDaiShiShang.yaml"
+    path: ./ruleset/KouDaiShiShang.yaml
+    interval: 86400
+  Ku6:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Ku6/Ku6.yaml"
+    path: ./ruleset/Ku6.yaml
+    interval: 86400
+  KuKeMusic:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/KuKeMusic/KuKeMusic.yaml"
+    path: ./ruleset/KuKeMusic.yaml
+    interval: 86400
+  KuaiDi100:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/KuaiDi100/KuaiDi100.yaml"
+    path: ./ruleset/KuaiDi100.yaml
+    interval: 86400
+  KuaiShou:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/KuaiShou/KuaiShou.yaml"
+    path: ./ruleset/KuaiShou.yaml
+    interval: 86400
+  KuangShi:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/KuangShi/KuangShi.yaml"
+    path: ./ruleset/KuangShi.yaml
+    interval: 86400
+  KugouKuwo:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/KugouKuwo/KugouKuwo.yaml"
+    path: ./ruleset/KugouKuwo.yaml
+    interval: 86400
+  LG:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/LG/LG.yaml"
+    path: ./ruleset/LG.yaml
+    interval: 86400
+  Lan:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Lan/Lan.yaml"
+    path: ./ruleset/Lan.yaml
+    interval: 86400
+  LanZouYun:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/LanZouYun/LanZouYun.yaml"
+    path: ./ruleset/LanZouYun.yaml
+    interval: 86400
+  LastFM:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/LastFM/LastFM.yaml"
+    path: ./ruleset/LastFM.yaml
+    interval: 86400
+  LastPass:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/LastPass/LastPass.yaml"
+    path: ./ruleset/LastPass.yaml
+    interval: 86400
+  LeJu:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/LeJu/LeJu.yaml"
+    path: ./ruleset/LeJu.yaml
+    interval: 86400
+  LeTV:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/LeTV/LeTV.yaml"
+    path: ./ruleset/LeTV.yaml
+    interval: 86400
+  Lenovo:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Lenovo/Lenovo.yaml"
+    path: ./ruleset/Lenovo.yaml
+    interval: 86400
+  LiTV:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/LiTV/LiTV.yaml"
+    path: ./ruleset/LiTV.yaml
+    interval: 86400
+  LianMeng:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/LianMeng/LianMeng.yaml"
+    path: ./ruleset/LianMeng.yaml
+    interval: 86400
+  Limelight:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Limelight/Limelight.yaml"
+    path: ./ruleset/Limelight.yaml
+    interval: 86400
+  Line:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Line/Line.yaml"
+    path: ./ruleset/Line.yaml
+    interval: 86400
+  LineTV:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/LineTV/LineTV.yaml"
+    path: ./ruleset/LineTV.yaml
+    interval: 86400
+  Linguee:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Linguee/Linguee.yaml"
+    path: ./ruleset/Linguee.yaml
+    interval: 86400
+  LinkedIn:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/LinkedIn/LinkedIn.yaml"
+    path: ./ruleset/LinkedIn.yaml
+    interval: 86400
+  Linux:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Linux/Linux.yaml"
+    path: ./ruleset/Linux.yaml
+    interval: 86400
+  LivePerson:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/LivePerson/LivePerson.yaml"
+    path: ./ruleset/LivePerson.yaml
+    interval: 86400
+  Logitech:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Logitech/Logitech.yaml"
+    path: ./ruleset/Logitech.yaml
+    interval: 86400
+  LondonReal:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/LondonReal/LondonReal.yaml"
+    path: ./ruleset/LondonReal.yaml
+    interval: 86400
+  LuDaShi:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/LuDaShi/LuDaShi.yaml"
+    path: ./ruleset/LuDaShi.yaml
+    interval: 86400
+  LvMiLianChuang:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/LvMiLianChuang/LvMiLianChuang.yaml"
+    path: ./ruleset/LvMiLianChuang.yaml
+    interval: 86400
+  MEGA:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/MEGA/MEGA.yaml"
+    path: ./ruleset/MEGA.yaml
+    interval: 86400
+  MIUIPrivacy:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/MIUIPrivacy/MIUIPrivacy.yaml"
+    path: ./ruleset/MIUIPrivacy.yaml
+    interval: 86400
+  MOMOShop:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/MOMOShop/MOMOShop.yaml"
+    path: ./ruleset/MOMOShop.yaml
+    interval: 86400
+  MOOV:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/MOOV/MOOV.yaml"
+    path: ./ruleset/MOOV.yaml
+    interval: 86400
+  Mail:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Mail/Mail.yaml"
+    path: ./ruleset/Mail.yaml
+    interval: 86400
+  Mailru:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Mailru/Mailru.yaml"
+    path: ./ruleset/Mailru.yaml
+    interval: 86400
+  Majsoul:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Majsoul/Majsoul.yaml"
+    path: ./ruleset/Majsoul.yaml
+    interval: 86400
+  Manorama:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Manorama/Manorama.yaml"
+    path: ./ruleset/Manorama.yaml
+    interval: 86400
+  Maocloud:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Maocloud/Maocloud.yaml"
+    path: ./ruleset/Maocloud.yaml
+    interval: 86400
+  Marketing:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Marketing/Marketing.yaml"
+    path: ./ruleset/Marketing.yaml
+    interval: 86400
+  McDonalds:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/McDonalds/McDonalds.yaml"
+    path: ./ruleset/McDonalds.yaml
+    interval: 86400
+  MeWatch:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/MeWatch/MeWatch.yaml"
+    path: ./ruleset/MeWatch.yaml
+    interval: 86400
+  MeiTu:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/MeiTu/MeiTu.yaml"
+    path: ./ruleset/MeiTu.yaml
+    interval: 86400
+  MeiTuan:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/MeiTuan/MeiTuan.yaml"
+    path: ./ruleset/MeiTuan.yaml
+    interval: 86400
+  MeiZu:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/MeiZu/MeiZu.yaml"
+    path: ./ruleset/MeiZu.yaml
+    interval: 86400
+  MiWu:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/MiWu/MiWu.yaml"
+    path: ./ruleset/MiWu.yaml
+    interval: 86400
+  Microsoft:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Microsoft/Microsoft.yaml"
+    path: ./ruleset/Microsoft.yaml
+    interval: 86400
+  MicrosoftEdge:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/MicrosoftEdge/MicrosoftEdge.yaml"
+    path: ./ruleset/MicrosoftEdge.yaml
+    interval: 86400
+  Migu:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Migu/Migu.yaml"
+    path: ./ruleset/Migu.yaml
+    interval: 86400
+  MingLueZhaoHui:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/MingLueZhaoHui/MingLueZhaoHui.yaml"
+    path: ./ruleset/MingLueZhaoHui.yaml
+    interval: 86400
+  Mogujie:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Mogujie/Mogujie.yaml"
+    path: ./ruleset/Mogujie.yaml
+    interval: 86400
+  Mojitianqi:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Mojitianqi/Mojitianqi.yaml"
+    path: ./ruleset/Mojitianqi.yaml
+    interval: 86400
+  Movefree:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Movefree/Movefree.yaml"
+    path: ./ruleset/Movefree.yaml
+    interval: 86400
+  Mozilla:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Mozilla/Mozilla.yaml"
+    path: ./ruleset/Mozilla.yaml
+    interval: 86400
+  My5:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/My5/My5.yaml"
+    path: ./ruleset/My5.yaml
+    interval: 86400
+  NBC:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/NBC/NBC.yaml"
+    path: ./ruleset/NBC.yaml
+    interval: 86400
+  NGA:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/NGA/NGA.yaml"
+    path: ./ruleset/NGA.yaml
+    interval: 86400
+  NGAA:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/NGAA/NGAA.yaml"
+    path: ./ruleset/NGAA.yaml
+    interval: 86400
+  NTPService:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/NTPService/NTPService.yaml"
+    path: ./ruleset/NTPService.yaml
+    interval: 86400
+  NYPost:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/NYPost/NYPost.yaml"
+    path: ./ruleset/NYPost.yaml
+    interval: 86400
+  NYTimes:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/NYTimes/NYTimes.yaml"
+    path: ./ruleset/NYTimes.yaml
+    interval: 86400
+  NaSDDNS:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/NaSDDNS/NaSDDNS.yaml"
+    path: ./ruleset/NaSDDNS.yaml
+    interval: 86400
+  Naver:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Naver/Naver.yaml"
+    path: ./ruleset/Naver.yaml
+    interval: 86400
+  NaverTV:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/NaverTV/NaverTV.yaml"
+    path: ./ruleset/NaverTV.yaml
+    interval: 86400
+  NetEase:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/NetEase/NetEase.yaml"
+    path: ./ruleset/NetEase.yaml
+    interval: 86400
+  NetEaseMusic:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/NetEaseMusic/NetEaseMusic.yaml"
+    path: ./ruleset/NetEaseMusic.yaml
+    interval: 86400
+  Netflix:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Netflix/Netflix.yaml"
+    path: ./ruleset/Netflix.yaml
+    interval: 86400
+  Niconico:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Niconico/Niconico.yaml"
+    path: ./ruleset/Niconico.yaml
+    interval: 86400
+  Nike:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Nike/Nike.yaml"
+    path: ./ruleset/Nike.yaml
+    interval: 86400
+  Nikkei:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Nikkei/Nikkei.yaml"
+    path: ./ruleset/Nikkei.yaml
+    interval: 86400
+  Nintendo:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Nintendo/Nintendo.yaml"
+    path: ./ruleset/Nintendo.yaml
+    interval: 86400
+  NivodTV:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/NivodTV/NivodTV.yaml"
+    path: ./ruleset/NivodTV.yaml
+    interval: 86400
+  Notion:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Notion/Notion.yaml"
+    path: ./ruleset/Notion.yaml
+    interval: 86400
+  NowE:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/NowE/NowE.yaml"
+    path: ./ruleset/NowE.yaml
+    interval: 86400
+  Npmjs:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Npmjs/Npmjs.yaml"
+    path: ./ruleset/Npmjs.yaml
+    interval: 86400
+  Nvidia:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Nvidia/Nvidia.yaml"
+    path: ./ruleset/Nvidia.yaml
+    interval: 86400
+  OKX:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/OKX/OKX.yaml"
+    path: ./ruleset/OKX.yaml
+    interval: 86400
+  OP:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/OP/OP.yaml"
+    path: ./ruleset/OP.yaml
+    interval: 86400
+  OPPO:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/OPPO/OPPO.yaml"
+    path: ./ruleset/OPPO.yaml
+    interval: 86400
+  Olevod:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Olevod/Olevod.yaml"
+    path: ./ruleset/Olevod.yaml
+    interval: 86400
+  OneDrive:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/OneDrive/OneDrive.yaml"
+    path: ./ruleset/OneDrive.yaml
+    interval: 86400
+  OnePlus:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/OnePlus/OnePlus.yaml"
+    path: ./ruleset/OnePlus.yaml
+    interval: 86400
+  OpenAI:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/OpenAI/OpenAI.yaml"
+    path: ./ruleset/OpenAI.yaml
+    interval: 86400
+  Opera:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Opera/Opera.yaml"
+    path: ./ruleset/Opera.yaml
+    interval: 86400
+  Oracle:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Oracle/Oracle.yaml"
+    path: ./ruleset/Oracle.yaml
+    interval: 86400
+  Oreilly:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Oreilly/Oreilly.yaml"
+    path: ./ruleset/Oreilly.yaml
+    interval: 86400
+  Origin:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Origin/Origin.yaml"
+    path: ./ruleset/Origin.yaml
+    interval: 86400
+  OuPeng:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/OuPeng/OuPeng.yaml"
+    path: ./ruleset/OuPeng.yaml
+    interval: 86400
+  Overcast:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Overcast/Overcast.yaml"
+    path: ./ruleset/Overcast.yaml
+    interval: 86400
+  Overwatch:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Overwatch/Overwatch.yaml"
+    path: ./ruleset/Overwatch.yaml
+    interval: 86400
+  PBS:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/PBS/PBS.yaml"
+    path: ./ruleset/PBS.yaml
+    interval: 86400
+  PCCW:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/PCCW/PCCW.yaml"
+    path: ./ruleset/PCCW.yaml
+    interval: 86400
+  PChome:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/PChome/PChome.yaml"
+    path: ./ruleset/PChome.yaml
+    interval: 86400
+  PChomeTW:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/PChomeTW/PChomeTW.yaml"
+    path: ./ruleset/PChomeTW.yaml
+    interval: 86400
+  PPTV:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/PPTV/PPTV.yaml"
+    path: ./ruleset/PPTV.yaml
+    interval: 86400
+  PSBC:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/PSBC/PSBC.yaml"
+    path: ./ruleset/PSBC.yaml
+    interval: 86400
+  Pandora:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Pandora/Pandora.yaml"
+    path: ./ruleset/Pandora.yaml
+    interval: 86400
+  PandoraTV:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/PandoraTV/PandoraTV.yaml"
+    path: ./ruleset/PandoraTV.yaml
+    interval: 86400
+  ParamountPlus:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/ParamountPlus/ParamountPlus.yaml"
+    path: ./ruleset/ParamountPlus.yaml
+    interval: 86400
+  Patreon:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Patreon/Patreon.yaml"
+    path: ./ruleset/Patreon.yaml
+    interval: 86400
+  PayPal:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/PayPal/PayPal.yaml"
+    path: ./ruleset/PayPal.yaml
+    interval: 86400
+  Peacock:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Peacock/Peacock.yaml"
+    path: ./ruleset/Peacock.yaml
+    interval: 86400
+  Picacg:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Picacg/Picacg.yaml"
+    path: ./ruleset/Picacg.yaml
+    interval: 86400
+  Picsee:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Picsee/Picsee.yaml"
+    path: ./ruleset/Picsee.yaml
+    interval: 86400
+  PikPak:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/PikPak/PikPak.yaml"
+    path: ./ruleset/PikPak.yaml
+    interval: 86400
+  Pinduoduo:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Pinduoduo/Pinduoduo.yaml"
+    path: ./ruleset/Pinduoduo.yaml
+    interval: 86400
+  PingAn:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/PingAn/PingAn.yaml"
+    path: ./ruleset/PingAn.yaml
+    interval: 86400
+  Pinterest:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Pinterest/Pinterest.yaml"
+    path: ./ruleset/Pinterest.yaml
+    interval: 86400
+  Pixiv:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Pixiv/Pixiv.yaml"
+    path: ./ruleset/Pixiv.yaml
+    interval: 86400
+  Pixnet:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Pixnet/Pixnet.yaml"
+    path: ./ruleset/Pixnet.yaml
+    interval: 86400
+  PlayStation:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/PlayStation/PlayStation.yaml"
+    path: ./ruleset/PlayStation.yaml
+    interval: 86400
+  PotatoChat:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/PotatoChat/PotatoChat.yaml"
+    path: ./ruleset/PotatoChat.yaml
+    interval: 86400
+  PrimeVideo:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/PrimeVideo/PrimeVideo.yaml"
+    path: ./ruleset/PrimeVideo.yaml
+    interval: 86400
+  Privacy:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Privacy/Privacy.yaml"
+    path: ./ruleset/Privacy.yaml
+    interval: 86400
+  PrivateTracker:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/PrivateTracker/PrivateTracker.yaml"
+    path: ./ruleset/PrivateTracker.yaml
+    interval: 86400
+  Protonmail:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Protonmail/Protonmail.yaml"
+    path: ./ruleset/Protonmail.yaml
+    interval: 86400
+  Proxy:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Proxy/Proxy.yaml"
+    path: ./ruleset/Proxy.yaml
+    interval: 86400
+  ProxyLite:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/ProxyLite/ProxyLite.yaml"
+    path: ./ruleset/ProxyLite.yaml
+    interval: 86400
+  Pubmatic:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Pubmatic/Pubmatic.yaml"
+    path: ./ruleset/Pubmatic.yaml
+    interval: 86400
+  Purikonejp:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Purikonejp/Purikonejp.yaml"
+    path: ./ruleset/Purikonejp.yaml
+    interval: 86400
+  Python:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Python/Python.yaml"
+    path: ./ruleset/Python.yaml
+    interval: 86400
+  QiNiuYun:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/QiNiuYun/QiNiuYun.yaml"
+    path: ./ruleset/QiNiuYun.yaml
+    interval: 86400
+  QingCloud:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/QingCloud/QingCloud.yaml"
+    path: ./ruleset/QingCloud.yaml
+    interval: 86400
+  Qobuz:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Qobuz/Qobuz.yaml"
+    path: ./ruleset/Qobuz.yaml
+    interval: 86400
+  Qualcomm:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Qualcomm/Qualcomm.yaml"
+    path: ./ruleset/Qualcomm.yaml
+    interval: 86400
+  QuickConnect:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/QuickConnect/QuickConnect.yaml"
+    path: ./ruleset/QuickConnect.yaml
+    interval: 86400
+  Qyyjt:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Qyyjt/Qyyjt.yaml"
+    path: ./ruleset/Qyyjt.yaml
+    interval: 86400
+  RTHK:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/RTHK/RTHK.yaml"
+    path: ./ruleset/RTHK.yaml
+    interval: 86400
+  Rakuten:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Rakuten/Rakuten.yaml"
+    path: ./ruleset/Rakuten.yaml
+    interval: 86400
+  Rarbg:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Rarbg/Rarbg.yaml"
+    path: ./ruleset/Rarbg.yaml
+    interval: 86400
+  Razer:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Razer/Razer.yaml"
+    path: ./ruleset/Razer.yaml
+    interval: 86400
+  Reabble:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Reabble/Reabble.yaml"
+    path: ./ruleset/Reabble.yaml
+    interval: 86400
+  Reddit:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Reddit/Reddit.yaml"
+    path: ./ruleset/Reddit.yaml
+    interval: 86400
+  RemoteDesktop:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/RemoteDesktop/RemoteDesktop.yaml"
+    path: ./ruleset/RemoteDesktop.yaml
+    interval: 86400
+  Riot:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Riot/Riot.yaml"
+    path: ./ruleset/Riot.yaml
+    interval: 86400
+  Rockstar:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Rockstar/Rockstar.yaml"
+    path: ./ruleset/Rockstar.yaml
+    interval: 86400
+  RuanMei:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/RuanMei/RuanMei.yaml"
+    path: ./ruleset/RuanMei.yaml
+    interval: 86400
+  SFExpress:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/SFExpress/SFExpress.yaml"
+    path: ./ruleset/SFExpress.yaml
+    interval: 86400
+  SMG:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/SMG/SMG.yaml"
+    path: ./ruleset/SMG.yaml
+    interval: 86400
+  SMZDM:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/SMZDM/SMZDM.yaml"
+    path: ./ruleset/SMZDM.yaml
+    interval: 86400
+  STUN:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/STUN/STUN.yaml"
+    path: ./ruleset/STUN.yaml
+    interval: 86400
+  Salesforce:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Salesforce/Salesforce.yaml"
+    path: ./ruleset/Salesforce.yaml
+    interval: 86400
+  Samsung:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Samsung/Samsung.yaml"
+    path: ./ruleset/Samsung.yaml
+    interval: 86400
+  Scaleflex:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Scaleflex/Scaleflex.yaml"
+    path: ./ruleset/Scaleflex.yaml
+    interval: 86400
+  Scholar:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Scholar/Scholar.yaml"
+    path: ./ruleset/Scholar.yaml
+    interval: 86400
+  Sectigo:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Sectigo/Sectigo.yaml"
+    path: ./ruleset/Sectigo.yaml
+    interval: 86400
+  ShangHaiJuXiao:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/ShangHaiJuXiao/ShangHaiJuXiao.yaml"
+    path: ./ruleset/ShangHaiJuXiao.yaml
+    interval: 86400
+  Shanling:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Shanling/Shanling.yaml"
+    path: ./ruleset/Shanling.yaml
+    interval: 86400
+  Sharethis:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Sharethis/Sharethis.yaml"
+    path: ./ruleset/Sharethis.yaml
+    interval: 86400
+  ShenMa:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/ShenMa/ShenMa.yaml"
+    path: ./ruleset/ShenMa.yaml
+    interval: 86400
+  ShiJiChaoXing:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/ShiJiChaoXing/ShiJiChaoXing.yaml"
+    path: ./ruleset/ShiJiChaoXing.yaml
+    interval: 86400
+  ShiNongZhiKe:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/ShiNongZhiKe/ShiNongZhiKe.yaml"
+    path: ./ruleset/ShiNongZhiKe.yaml
+    interval: 86400
+  Shopee:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Shopee/Shopee.yaml"
+    path: ./ruleset/Shopee.yaml
+    interval: 86400
+  Shopify:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Shopify/Shopify.yaml"
+    path: ./ruleset/Shopify.yaml
+    interval: 86400
+  Sina:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Sina/Sina.yaml"
+    path: ./ruleset/Sina.yaml
+    interval: 86400
+  Siri:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Siri/Siri.yaml"
+    path: ./ruleset/Siri.yaml
+    interval: 86400
+  SkyGO:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/SkyGO/SkyGO.yaml"
+    path: ./ruleset/SkyGO.yaml
+    interval: 86400
+  Slack:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Slack/Slack.yaml"
+    path: ./ruleset/Slack.yaml
+    interval: 86400
+  SlideShare:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/SlideShare/SlideShare.yaml"
+    path: ./ruleset/SlideShare.yaml
+    interval: 86400
+  Sling:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Sling/Sling.yaml"
+    path: ./ruleset/Sling.yaml
+    interval: 86400
+  SmarTone:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/SmarTone/SmarTone.yaml"
+    path: ./ruleset/SmarTone.yaml
+    interval: 86400
+  Snap:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Snap/Snap.yaml"
+    path: ./ruleset/Snap.yaml
+    interval: 86400
+  Sohu:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Sohu/Sohu.yaml"
+    path: ./ruleset/Sohu.yaml
+    interval: 86400
+  Sony:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Sony/Sony.yaml"
+    path: ./ruleset/Sony.yaml
+    interval: 86400
+  SouFang:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/SouFang/SouFang.yaml"
+    path: ./ruleset/SouFang.yaml
+    interval: 86400
+  SoundCloud:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/SoundCloud/SoundCloud.yaml"
+    path: ./ruleset/SoundCloud.yaml
+    interval: 86400
+  SourceForge:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/SourceForge/SourceForge.yaml"
+    path: ./ruleset/SourceForge.yaml
+    interval: 86400
+  Spark:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Spark/Spark.yaml"
+    path: ./ruleset/Spark.yaml
+    interval: 86400
+  Speedtest:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Speedtest/Speedtest.yaml"
+    path: ./ruleset/Speedtest.yaml
+    interval: 86400
+  Spotify:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Spotify/Spotify.yaml"
+    path: ./ruleset/Spotify.yaml
+    interval: 86400
+  Stackexchange:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Stackexchange/Stackexchange.yaml"
+    path: ./ruleset/Stackexchange.yaml
+    interval: 86400
+  StarCraftII:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/StarCraftII/StarCraftII.yaml"
+    path: ./ruleset/StarCraftII.yaml
+    interval: 86400
+  Starbucks:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Starbucks/Starbucks.yaml"
+    path: ./ruleset/Starbucks.yaml
+    interval: 86400
+  Steam:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Steam/Steam.yaml"
+    path: ./ruleset/Steam.yaml
+    interval: 86400
+  SteamCN:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/SteamCN/SteamCN.yaml"
+    path: ./ruleset/SteamCN.yaml
+    interval: 86400
+  Stripe:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Stripe/Stripe.yaml"
+    path: ./ruleset/Stripe.yaml
+    interval: 86400
+  SuNing:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/SuNing/SuNing.yaml"
+    path: ./ruleset/SuNing.yaml
+    interval: 86400
+  SublimeText:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/SublimeText/SublimeText.yaml"
+    path: ./ruleset/SublimeText.yaml
+    interval: 86400
+  SuiShiChuanMei:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/SuiShiChuanMei/SuiShiChuanMei.yaml"
+    path: ./ruleset/SuiShiChuanMei.yaml
+    interval: 86400
+  Supercell:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Supercell/Supercell.yaml"
+    path: ./ruleset/Supercell.yaml
+    interval: 86400
+  Synology:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Synology/Synology.yaml"
+    path: ./ruleset/Synology.yaml
+    interval: 86400
+  SystemOTA:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/SystemOTA/SystemOTA.yaml"
+    path: ./ruleset/SystemOTA.yaml
+    interval: 86400
+  TCL:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/TCL/TCL.yaml"
+    path: ./ruleset/TCL.yaml
+    interval: 86400
+  TIDAL:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/TIDAL/TIDAL.yaml"
+    path: ./ruleset/TIDAL.yaml
+    interval: 86400
+  TVB:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/TVB/TVB.yaml"
+    path: ./ruleset/TVB.yaml
+    interval: 86400
+  TVer:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/TVer/TVer.yaml"
+    path: ./ruleset/TVer.yaml
+    interval: 86400
+  TaiKang:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/TaiKang/TaiKang.yaml"
+    path: ./ruleset/TaiKang.yaml
+    interval: 86400
+  TaiWanGood:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/TaiWanGood/TaiWanGood.yaml"
+    path: ./ruleset/TaiWanGood.yaml
+    interval: 86400
+  TaiheMusic:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/TaiheMusic/TaiheMusic.yaml"
+    path: ./ruleset/TaiheMusic.yaml
+    interval: 86400
+  TapTap:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/TapTap/TapTap.yaml"
+    path: ./ruleset/TapTap.yaml
+    interval: 86400
+  TeamViewer:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/TeamViewer/TeamViewer.yaml"
+    path: ./ruleset/TeamViewer.yaml
+    interval: 86400
+  Teambition:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Teambition/Teambition.yaml"
+    path: ./ruleset/Teambition.yaml
+    interval: 86400
+  Teams:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Teams/Teams.yaml"
+    path: ./ruleset/Teams.yaml
+    interval: 86400
+  Telegram:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Telegram/Telegram.yaml"
+    path: ./ruleset/Telegram.yaml
+    interval: 86400
+  TelegramNL:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/TelegramNL/TelegramNL.yaml"
+    path: ./ruleset/TelegramNL.yaml
+    interval: 86400
+  TelegramSG:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/TelegramSG/TelegramSG.yaml"
+    path: ./ruleset/TelegramSG.yaml
+    interval: 86400
+  TelegramUS:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/TelegramUS/TelegramUS.yaml"
+    path: ./ruleset/TelegramUS.yaml
+    interval: 86400
+  Tencent:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Tencent/Tencent.yaml"
+    path: ./ruleset/Tencent.yaml
+    interval: 86400
+  TencentVideo:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/TencentVideo/TencentVideo.yaml"
+    path: ./ruleset/TencentVideo.yaml
+    interval: 86400
+  TeraBox:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/TeraBox/TeraBox.yaml"
+    path: ./ruleset/TeraBox.yaml
+    interval: 86400
+  Tesla:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Tesla/Tesla.yaml"
+    path: ./ruleset/Tesla.yaml
+    interval: 86400
+  TestFlight:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/TestFlight/TestFlight.yaml"
+    path: ./ruleset/TestFlight.yaml
+    interval: 86400
+  ThomsonReuters:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/ThomsonReuters/ThomsonReuters.yaml"
+    path: ./ruleset/ThomsonReuters.yaml
+    interval: 86400
+  Threads:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Threads/Threads.yaml"
+    path: ./ruleset/Threads.yaml
+    interval: 86400
+  TianTianKanKan:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/TianTianKanKan/TianTianKanKan.yaml"
+    path: ./ruleset/TianTianKanKan.yaml
+    interval: 86400
+  TianWeiChengXin:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/TianWeiChengXin/TianWeiChengXin.yaml"
+    path: ./ruleset/TianWeiChengXin.yaml
+    interval: 86400
+  TianYaForum:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/TianYaForum/TianYaForum.yaml"
+    path: ./ruleset/TianYaForum.yaml
+    interval: 86400
+  TigerFintech:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/TigerFintech/TigerFintech.yaml"
+    path: ./ruleset/TigerFintech.yaml
+    interval: 86400
+  TikTok:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/TikTok/TikTok.yaml"
+    path: ./ruleset/TikTok.yaml
+    interval: 86400
+  Tmdb:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Tmdb/Tmdb.yaml"
+    path: ./ruleset/Tmdb.yaml
+    interval: 86400
+  TongCheng:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/TongCheng/TongCheng.yaml"
+    path: ./ruleset/TongCheng.yaml
+    interval: 86400
+  TrustWave:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/TrustWave/TrustWave.yaml"
+    path: ./ruleset/TrustWave.yaml
+    interval: 86400
+  TruthSocial:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/TruthSocial/TruthSocial.yaml"
+    path: ./ruleset/TruthSocial.yaml
+    interval: 86400
+  Tumblr:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Tumblr/Tumblr.yaml"
+    path: ./ruleset/Tumblr.yaml
+    interval: 86400
+  Twitch:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Twitch/Twitch.yaml"
+    path: ./ruleset/Twitch.yaml
+    interval: 86400
+  Twitter:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Twitter/Twitter.yaml"
+    path: ./ruleset/Twitter.yaml
+    interval: 86400
+  U17:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/U17/U17.yaml"
+    path: ./ruleset/U17.yaml
+    interval: 86400
+  UBI:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/UBI/UBI.yaml"
+    path: ./ruleset/UBI.yaml
+    interval: 86400
+  UC:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/UC/UC.yaml"
+    path: ./ruleset/UC.yaml
+    interval: 86400
+  UCloud:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/UCloud/UCloud.yaml"
+    path: ./ruleset/UCloud.yaml
+    interval: 86400
+  UKMedia:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/UKMedia/UKMedia.yaml"
+    path: ./ruleset/UKMedia.yaml
+    interval: 86400
+  UPYun:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/UPYun/UPYun.yaml"
+    path: ./ruleset/UPYun.yaml
+    interval: 86400
+  USMedia:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/USMedia/USMedia.yaml"
+    path: ./ruleset/USMedia.yaml
+    interval: 86400
+  Ubisoft:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Ubisoft/Ubisoft.yaml"
+    path: ./ruleset/Ubisoft.yaml
+    interval: 86400
+  Ubuntu:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Ubuntu/Ubuntu.yaml"
+    path: ./ruleset/Ubuntu.yaml
+    interval: 86400
+  Udacity:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Udacity/Udacity.yaml"
+    path: ./ruleset/Udacity.yaml
+    interval: 86400
+  UnionPay:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/UnionPay/UnionPay.yaml"
+    path: ./ruleset/UnionPay.yaml
+    interval: 86400
+  Unity:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Unity/Unity.yaml"
+    path: ./ruleset/Unity.yaml
+    interval: 86400
+  VISA:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/VISA/VISA.yaml"
+    path: ./ruleset/VISA.yaml
+    interval: 86400
+  VK:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/VK/VK.yaml"
+    path: ./ruleset/VK.yaml
+    interval: 86400
+  VOA:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/VOA/VOA.yaml"
+    path: ./ruleset/VOA.yaml
+    interval: 86400
+  Vancl:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Vancl/Vancl.yaml"
+    path: ./ruleset/Vancl.yaml
+    interval: 86400
+  Vercel:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Vercel/Vercel.yaml"
+    path: ./ruleset/Vercel.yaml
+    interval: 86400
+  Verisign:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Verisign/Verisign.yaml"
+    path: ./ruleset/Verisign.yaml
+    interval: 86400
+  Verizon:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Verizon/Verizon.yaml"
+    path: ./ruleset/Verizon.yaml
+    interval: 86400
+  VidolTV:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/VidolTV/VidolTV.yaml"
+    path: ./ruleset/VidolTV.yaml
+    interval: 86400
+  VikACG:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/VikACG/VikACG.yaml"
+    path: ./ruleset/VikACG.yaml
+    interval: 86400
+  Viki:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Viki/Viki.yaml"
+    path: ./ruleset/Viki.yaml
+    interval: 86400
+  Vimeo:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Vimeo/Vimeo.yaml"
+    path: ./ruleset/Vimeo.yaml
+    interval: 86400
+  VipShop:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/VipShop/VipShop.yaml"
+    path: ./ruleset/VipShop.yaml
+    interval: 86400
+  ViuTV:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/ViuTV/ViuTV.yaml"
+    path: ./ruleset/ViuTV.yaml
+    interval: 86400
+  Vivo:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Vivo/Vivo.yaml"
+    path: ./ruleset/Vivo.yaml
+    interval: 86400
+  Voxmedia:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Voxmedia/Voxmedia.yaml"
+    path: ./ruleset/Voxmedia.yaml
+    interval: 86400
+  W3schools:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/W3schools/W3schools.yaml"
+    path: ./ruleset/W3schools.yaml
+    interval: 86400
+  WIX:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/WIX/WIX.yaml"
+    path: ./ruleset/WIX.yaml
+    interval: 86400
+  WanKaHuanJu:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/WanKaHuanJu/WanKaHuanJu.yaml"
+    path: ./ruleset/WanKaHuanJu.yaml
+    interval: 86400
+  WanMeiShiJie:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/WanMeiShiJie/WanMeiShiJie.yaml"
+    path: ./ruleset/WanMeiShiJie.yaml
+    interval: 86400
+  Wanfang:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Wanfang/Wanfang.yaml"
+    path: ./ruleset/Wanfang.yaml
+    interval: 86400
+  WangSuKeJi:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/WangSuKeJi/WangSuKeJi.yaml"
+    path: ./ruleset/WangSuKeJi.yaml
+    interval: 86400
+  WangXinKeJi:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/WangXinKeJi/WangXinKeJi.yaml"
+    path: ./ruleset/WangXinKeJi.yaml
+    interval: 86400
+  WeChat:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/WeChat/WeChat.yaml"
+    path: ./ruleset/WeChat.yaml
+    interval: 86400
+  WeTV:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/WeTV/WeTV.yaml"
+    path: ./ruleset/WeTV.yaml
+    interval: 86400
+  WeType:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/WeType/WeType.yaml"
+    path: ./ruleset/WeType.yaml
+    interval: 86400
+  WeiZhiYunDong:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/WeiZhiYunDong/WeiZhiYunDong.yaml"
+    path: ./ruleset/WeiZhiYunDong.yaml
+    interval: 86400
+  Weibo:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Weibo/Weibo.yaml"
+    path: ./ruleset/Weibo.yaml
+    interval: 86400
+  WenJuanXing:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/WenJuanXing/WenJuanXing.yaml"
+    path: ./ruleset/WenJuanXing.yaml
+    interval: 86400
+  Westerndigital:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Westerndigital/Westerndigital.yaml"
+    path: ./ruleset/Westerndigital.yaml
+    interval: 86400
+  Whatsapp:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Whatsapp/Whatsapp.yaml"
+    path: ./ruleset/Whatsapp.yaml
+    interval: 86400
+  WiFiMaster:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/WiFiMaster/WiFiMaster.yaml"
+    path: ./ruleset/WiFiMaster.yaml
+    interval: 86400
+  Wikimedia:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Wikimedia/Wikimedia.yaml"
+    path: ./ruleset/Wikimedia.yaml
+    interval: 86400
+  Wikipedia:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Wikipedia/Wikipedia.yaml"
+    path: ./ruleset/Wikipedia.yaml
+    interval: 86400
+  WildRift:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/WildRift/WildRift.yaml"
+    path: ./ruleset/WildRift.yaml
+    interval: 86400
+  WoLai:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/WoLai/WoLai.yaml"
+    path: ./ruleset/WoLai.yaml
+    interval: 86400
+  Wordpress:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Wordpress/Wordpress.yaml"
+    path: ./ruleset/Wordpress.yaml
+    interval: 86400
+  WorldofWarcraft:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/WorldofWarcraft/WorldofWarcraft.yaml"
+    path: ./ruleset/WorldofWarcraft.yaml
+    interval: 86400
+  Wteam:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Wteam/Wteam.yaml"
+    path: ./ruleset/Wteam.yaml
+    interval: 86400
+  Xbox:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Xbox/Xbox.yaml"
+    path: ./ruleset/Xbox.yaml
+    interval: 86400
+  XiamiMusic:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/XiamiMusic/XiamiMusic.yaml"
+    path: ./ruleset/XiamiMusic.yaml
+    interval: 86400
+  XianYu:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/XianYu/XianYu.yaml"
+    path: ./ruleset/XianYu.yaml
+    interval: 86400
+  XiaoGouKeJi:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/XiaoGouKeJi/XiaoGouKeJi.yaml"
+    path: ./ruleset/XiaoGouKeJi.yaml
+    interval: 86400
+  XiaoHongShu:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/XiaoHongShu/XiaoHongShu.yaml"
+    path: ./ruleset/XiaoHongShu.yaml
+    interval: 86400
+  XiaoMi:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/XiaoMi/XiaoMi.yaml"
+    path: ./ruleset/XiaoMi.yaml
+    interval: 86400
+  XiaoYuanKeJi:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/XiaoYuanKeJi/XiaoYuanKeJi.yaml"
+    path: ./ruleset/XiaoYuanKeJi.yaml
+    interval: 86400
+  XieCheng:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/XieCheng/XieCheng.yaml"
+    path: ./ruleset/XieCheng.yaml
+    interval: 86400
+  XingKongWuXian:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/XingKongWuXian/XingKongWuXian.yaml"
+    path: ./ruleset/XingKongWuXian.yaml
+    interval: 86400
+  XueErSi:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/XueErSi/XueErSi.yaml"
+    path: ./ruleset/XueErSi.yaml
+    interval: 86400
+  XueQiu:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/XueQiu/XueQiu.yaml"
+    path: ./ruleset/XueQiu.yaml
+    interval: 86400
+  Xunlei:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Xunlei/Xunlei.yaml"
+    path: ./ruleset/Xunlei.yaml
+    interval: 86400
+  YYeTs:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/YYeTs/YYeTs.yaml"
+    path: ./ruleset/YYeTs.yaml
+    interval: 86400
+  Yandex:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Yandex/Yandex.yaml"
+    path: ./ruleset/Yandex.yaml
+    interval: 86400
+  YiChe:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/YiChe/YiChe.yaml"
+    path: ./ruleset/YiChe.yaml
+    interval: 86400
+  YiXiaKeJi:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/YiXiaKeJi/YiXiaKeJi.yaml"
+    path: ./ruleset/YiXiaKeJi.yaml
+    interval: 86400
+  YiZhiBo:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/YiZhiBo/YiZhiBo.yaml"
+    path: ./ruleset/YiZhiBo.yaml
+    interval: 86400
+  YouMengChuangXiang:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/YouMengChuangXiang/YouMengChuangXiang.yaml"
+    path: ./ruleset/YouMengChuangXiang.yaml
+    interval: 86400
+  YouTube:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/YouTube/YouTube.yaml"
+    path: ./ruleset/YouTube.yaml
+    interval: 86400
+  YouTubeMusic:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/YouTubeMusic/YouTubeMusic.yaml"
+    path: ./ruleset/YouTubeMusic.yaml
+    interval: 86400
+  YouZan:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/YouZan/YouZan.yaml"
+    path: ./ruleset/YouZan.yaml
+    interval: 86400
+  Youku:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Youku/Youku.yaml"
+    path: ./ruleset/Youku.yaml
+    interval: 86400
+  YuanFuDao:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/YuanFuDao/YuanFuDao.yaml"
+    path: ./ruleset/YuanFuDao.yaml
+    interval: 86400
+  YunFanJiaSu:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/YunFanJiaSu/YunFanJiaSu.yaml"
+    path: ./ruleset/YunFanJiaSu.yaml
+    interval: 86400
+  ZDNS:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/ZDNS/ZDNS.yaml"
+    path: ./ruleset/ZDNS.yaml
+    interval: 86400
+  Zalo:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Zalo/Zalo.yaml"
+    path: ./ruleset/Zalo.yaml
+    interval: 86400
+  Zee:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Zee/Zee.yaml"
+    path: ./ruleset/Zee.yaml
+    interval: 86400
+  ZeeTV:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/ZeeTV/ZeeTV.yaml"
+    path: ./ruleset/ZeeTV.yaml
+    interval: 86400
+  Zendesk:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Zendesk/Zendesk.yaml"
+    path: ./ruleset/Zendesk.yaml
+    interval: 86400
+  ZhangYue:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/ZhangYue/ZhangYue.yaml"
+    path: ./ruleset/ZhangYue.yaml
+    interval: 86400
+  ZhiYinManKe:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/ZhiYinManKe/ZhiYinManKe.yaml"
+    path: ./ruleset/ZhiYinManKe.yaml
+    interval: 86400
+  ZhiYunZhong:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/ZhiYunZhong/ZhiYunZhong.yaml"
+    path: ./ruleset/ZhiYunZhong.yaml
+    interval: 86400
+  Zhihu:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Zhihu/Zhihu.yaml"
+    path: ./ruleset/Zhihu.yaml
+    interval: 86400
+  ZhihuAds:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/ZhihuAds/ZhihuAds.yaml"
+    path: ./ruleset/ZhihuAds.yaml
+    interval: 86400
+  ZhongGuoShiHua:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/ZhongGuoShiHua/ZhongGuoShiHua.yaml"
+    path: ./ruleset/ZhongGuoShiHua.yaml
+    interval: 86400
+  ZhongWeiShiJi:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/ZhongWeiShiJi/ZhongWeiShiJi.yaml"
+    path: ./ruleset/ZhongWeiShiJi.yaml
+    interval: 86400
+  ZhongXingTongXun:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/ZhongXingTongXun/ZhongXingTongXun.yaml"
+    path: ./ruleset/ZhongXingTongXun.yaml
+    interval: 86400
+  ZhongYuanYiShang:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/ZhongYuanYiShang/ZhongYuanYiShang.yaml"
+    path: ./ruleset/ZhongYuanYiShang.yaml
+    interval: 86400
+  ZhuanZhuan:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/ZhuanZhuan/ZhuanZhuan.yaml"
+    path: ./ruleset/ZhuanZhuan.yaml
+    interval: 86400
+  Zoho:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Zoho/Zoho.yaml"
+    path: ./ruleset/Zoho.yaml
+    interval: 86400
+  aiXcoder:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/aiXcoder/aiXcoder.yaml"
+    path: ./ruleset/aiXcoder.yaml
+    interval: 86400
+  eBay:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/eBay/eBay.yaml"
+    path: ./ruleset/eBay.yaml
+    interval: 86400
+  friDay:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/friDay/friDay.yaml"
+    path: ./ruleset/friDay.yaml
+    interval: 86400
+  iCloud:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/iCloud/iCloud.yaml"
+    path: ./ruleset/iCloud.yaml
+    interval: 86400
+  iCloudPrivateRelay:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/iCloudPrivateRelay/iCloudPrivateRelay.yaml"
+    path: ./ruleset/iCloudPrivateRelay.yaml
+    interval: 86400
+  iFlytek:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/iFlytek/iFlytek.yaml"
+    path: ./ruleset/iFlytek.yaml
+    interval: 86400
+  iQIYI:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/iQIYI/iQIYI.yaml"
+    path: ./ruleset/iQIYI.yaml
+    interval: 86400
+  iQIYIIntl:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/iQIYIIntl/iQIYIIntl.yaml"
+    path: ./ruleset/iQIYIIntl.yaml
+    interval: 86400
+  iTalkBB:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/iTalkBB/iTalkBB.yaml"
+    path: ./ruleset/iTalkBB.yaml
+    interval: 86400
+  ifanr:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/ifanr/ifanr.yaml"
+    path: ./ruleset/ifanr.yaml
+    interval: 86400
+  myTVSUPER:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/myTVSUPER/myTVSUPER.yaml"
+    path: ./ruleset/myTVSUPER.yaml
+    interval: 86400
+  zhanqi:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/zhanqi/zhanqi.yaml"
+    path: ./ruleset/zhanqi.yaml
+    interval: 86400
+
+# gfwlist rules should be placed at the end of domain rules
+# to avoid misclassification by other rules
+# 黑名单规则应放在域名规则的最后，以避免被其他规则误判
+rules:
+  # ===============================
+  # 0. GEO网络规则 (Basic Network Rules)
+  # ==============================
+  # 广告拦截（推荐放在最前面）
+  - GEOSITE,category-ads-all,REJECT
+  - RULE-SET,steven,DIRECT
+  - GEOIP,LAN,DIRECT
+  - RULE-SET,private,DIRECT
+  - DOMAIN,clash.razord.top,DIRECT
+  - DOMAIN,yacd.haishan.me,DIRECT
+  - RULE-SET,reject,REJECT
+
+  # ==============================
+  # 1. 基础设施与拦截 (Infrastructure & Blocking)
+  # ==============================
+  # 广告拦截
+  - RULE-SET,AdColony,🚫 广告拦截
+  - RULE-SET,AdGuardSDNSFilter,🚫 广告拦截
+  - RULE-SET,AddToAny,🚫 广告拦截
+  - RULE-SET,Addthis,🚫 广告拦截
+  - RULE-SET,Advertising,🚫 广告拦截
+  - RULE-SET,AdvertisingLite,🚫 广告拦截
+  - RULE-SET,AdvertisingMiTV,🚫 广告拦截
+  - RULE-SET,AdvertisingTest,🚫 广告拦截
+  - RULE-SET,AppLovin,🚫 广告拦截
+  - RULE-SET,Domob,🚫 广告拦截
+  - RULE-SET,EasyPrivacy,🚫 广告拦截
+  - RULE-SET,Flurry,🚫 广告拦截
+  - RULE-SET,Marketing,🚫 广告拦截
+  - RULE-SET,Pubmatic,🚫 广告拦截
+  - RULE-SET,Sharethis,🚫 广告拦截
+  - RULE-SET,ZhihuAds,🚫 广告拦截
+  - RULE-SET,Hijacking,🚫 广告拦截
+
+  - RULE-SET,adblock,🚫 广告拦截
+
+  # DNS 及 证书
+  - RULE-SET,CNNIC,🛡️ DNS及证书-国内
+  - RULE-SET,NaSDDNS,🛡️ DNS及证书-国内
+  - RULE-SET,ZDNS,🛡️ DNS及证书-国内
+  - RULE-SET,BlockHttpDNS,🛡️ DNS及证书-国内
+  - RULE-SET,DNS,🛡️ DNS及证书-国内
+  - RULE-SET,Actalis,🌐 DNS及证书-国外
+  - RULE-SET,AmazonTrust,🌐 DNS及证书-国外
+  - RULE-SET,Buypass,🌐 DNS及证书-国外
+  - RULE-SET,Comodo,🌐 DNS及证书-国外
+  - RULE-SET,CyberTrust,🌐 DNS及证书-国外
+  - RULE-SET,DigiCert,🌐 DNS及证书-国外
+  - RULE-SET,DtDNS,🌐 DNS及证书-国外
+  - RULE-SET,DynDNS,🌐 DNS及证书-国外
+  - RULE-SET,Entrust,🌐 DNS及证书-国外
+  - RULE-SET,GlobalSign,🌐 DNS及证书-国外
+  - RULE-SET,Identrust,🌐 DNS及证书-国外
+  - RULE-SET,Sectigo,🌐 DNS及证书-国外
+  - RULE-SET,TrustWave,🌐 DNS及证书-国外
+  - RULE-SET,Verisign,🌐 DNS及证书-国外
+
+  # ==============================
+  # 2. 核心平台服务 (Big Tech & AI)
+  # ==============================
+  # AI 人工智能
+  - RULE-SET,Anthropic,🤖 人工智能
+  - RULE-SET,BardAI,🤖 人工智能
+  - RULE-SET,Civitai,🤖 人工智能
+  - RULE-SET,Claude,🤖 人工智能
+  - RULE-SET,Copilot,🤖 人工智能
+  - RULE-SET,Gemini,🤖 人工智能
+  - RULE-SET,OpenAI,🤖 人工智能
+  - RULE-SET,aiXcoder,🤖 人工智能
+
+  # 苹果服务
+  # 不能代理www.apple.com网站，否则无法打开
+  #- DOMAIN-SUFFIX,apple.com,🍎 苹果服务(不代理www.apple.com)
+  - RULE-SET,apple,🍎 苹果服务(不代理www.apple.com)
+  - RULE-SET,icloud,🍎 苹果服务(不代理www.apple.com)
+  - RULE-SET,AppStore,🍎 苹果服务(不代理www.apple.com)
+  - RULE-SET,iCloud,🍎 苹果服务(不代理www.apple.com)
+  - RULE-SET,iCloudPrivateRelay,🍎 苹果服务(不代理www.apple.com)
+  - RULE-SET,Apple,🍎 苹果服务(不代理www.apple.com)
+  - RULE-SET,AppleDaily,🍎 苹果服务(不代理www.apple.com)
+  - RULE-SET,AppleMusic,🍎 苹果服务(不代理www.apple.com)
+  - RULE-SET,AppleTV,🍎 苹果服务(不代理www.apple.com)
+  - RULE-SET,FindMy,🍎 苹果服务(不代理www.apple.com)
+  - RULE-SET,AppleNews,🍎 苹果服务(不代理www.apple.com)
+  - RULE-SET,AppleDev,🍎 苹果服务(不代理www.apple.com)
+  - RULE-SET,AppleFirmware,🍎 苹果服务(不代理www.apple.com)
+  - RULE-SET,AppleHardware,🍎 苹果服务(不代理www.apple.com)
+  - RULE-SET,AppleID,🍎 苹果服务(不代理www.apple.com)
+  - RULE-SET,AppleMail,🍎 苹果服务(不代理www.apple.com)
+  - RULE-SET,AppleMedia,🍎 苹果服务(不代理www.apple.com)
+  - RULE-SET,AppleProxy,🍎 苹果服务(不代理www.apple.com)
+  - RULE-SET,TestFlight,🍎 苹果服务(不代理www.apple.com)
+  - RULE-SET,Siri,🍎 苹果服务(不代理www.apple.com)
+  - RULE-SET,SystemOTA,🍎 苹果服务(不代理www.apple.com)
+  - RULE-SET,FitnessPlus,🍎 苹果服务(不代理www.apple.com)
+  - RULE-SET,Beats,🍎 苹果服务(不代理www.apple.com)
+
+  # 微软服务
+  - RULE-SET,OneDrive,Ⓜ️ 微软服务
+  - RULE-SET,Microsoft,Ⓜ️ 微软服务
+  - RULE-SET,MicrosoftEdge,Ⓜ️ 微软服务
+  - RULE-SET,Teams,Ⓜ️ 微软服务
+  - RULE-SET,Bing,Ⓜ️ 微软服务
+  - RULE-SET,Copilot,Ⓜ️ 微软服务
+
+  # 谷歌服务
+  - RULE-SET,google,🚀 谷歌服务
+  - RULE-SET,YouTube,🚀 谷歌服务
+  - RULE-SET,YouTubeMusic,🚀 谷歌服务
+  - RULE-SET,Google,🚀 谷歌服务
+  - RULE-SET,GoogleDrive,🚀 谷歌服务
+  - RULE-SET,GoogleEarth,🚀 谷歌服务
+  - RULE-SET,GoogleSearch,🚀 谷歌服务
+  - RULE-SET,GoogleVoice,🚀 谷歌服务
+  - RULE-SET,GoogleFCM,🚀 谷歌服务
+  - RULE-SET,Chromecast,🚀 谷歌服务
+  - RULE-SET,BardAI,🚀 谷歌服务
+  - RULE-SET,Gemini,🚀 谷歌服务
+
+  # 群晖 NAS
+  - RULE-SET,Synology,🏠 群晖 NAS
+  # - RULE-SET,SynologyDrive,🏠 群晖 NAS
+  # - RULE-SET,SynologyMail,🏠 群晖 NAS
+  # - RULE-SET,SynologyProxy,🏠 群晖 NAS
+  # - RULE-SET,SynologyVPN,🏠 群晖 NAS
+  # - RULE-SET,SynologyNAS,🏠 群晖 NAS
+  - RULE-SET,QuickConnect,🏠 群晖 NAS
+
+  # ==============================
+  # 3. 社交与媒体 (Social & Media)
+  # ==============================
+  # 社交媒体 - 国内
+  - RULE-SET,BaiDuTieBa,💬 社交媒体-国内
+  - RULE-SET,Blued,💬 社交媒体-国内
+  - RULE-SET,DouBan,💬 社交媒体-国内
+  - RULE-SET,FanFou,💬 社交媒体-国内
+  - RULE-SET,WeChat,💬 社交媒体-国内
+  - RULE-SET,Weibo,💬 社交媒体-国内
+  - RULE-SET,Zhihu,💬 社交媒体-国内
+
+  # 社交媒体 - 国外
+  - RULE-SET,telegramcidr,📲 社交媒体-国外
+  - RULE-SET,4chan,📲 社交媒体-国外
+  - RULE-SET,Clubhouse,📲 社交媒体-国外
+  - RULE-SET,ClubhouseIP,📲 社交媒体-国外
+  - RULE-SET,Discord,📲 社交媒体-国外
+  - RULE-SET,Disqus,📲 社交媒体-国外
+  - RULE-SET,Facebook,📲 社交媒体-国外
+  - RULE-SET,Instagram,📲 社交媒体-国外
+  - RULE-SET,KakaoTalk,📲 社交媒体-国外
+  - RULE-SET,Line,📲 社交媒体-国外
+  - RULE-SET,LinkedIn,📲 社交媒体-国外
+  - RULE-SET,Pinterest,📲 社交媒体-国外
+  - RULE-SET,PotatoChat,📲 社交媒体-国外
+  - RULE-SET,Reddit,📲 社交媒体-国外
+  - RULE-SET,Slack,📲 社交媒体-国外
+  - RULE-SET,Snap,📲 社交媒体-国外
+  - RULE-SET,Telegram,📲 社交媒体-国外
+  - RULE-SET,TelegramNL,📲 社交媒体-国外
+  - RULE-SET,TelegramSG,📲 社交媒体-国外
+  - RULE-SET,TelegramUS,📲 社交媒体-国外
+  - RULE-SET,Threads,📲 社交媒体-国外
+  - RULE-SET,TruthSocial,📲 社交媒体-国外
+  - RULE-SET,Tumblr,📲 社交媒体-国外
+  - RULE-SET,Twitter,📲 社交媒体-国外
+  - RULE-SET,VK,📲 社交媒体-国外
+  - RULE-SET,Whatsapp,📲 社交媒体-国外
+  - RULE-SET,Zalo,📲 社交媒体-国外
+  - RULE-SET,Hkgolden,📲 社交媒体-国外
+
+  # 视频流媒体 - 国内
+  - RULE-SET,56,🎬 视频流媒体-国内
+  - RULE-SET,6JianFang,🎬 视频流媒体-国内
+  - RULE-SET,AcFun,🎬 视频流媒体-国内
+  - RULE-SET,BaoFengYingYin,🎬 视频流媒体-国内
+  - RULE-SET,BesTV,🎬 视频流媒体-国内
+  - RULE-SET,BiliBili,🎬 视频流媒体-国内
+  - RULE-SET,CCTV,🎬 视频流媒体-国内
+  - RULE-SET,CETV,🎬 视频流媒体-国内
+  - RULE-SET,CIBN,🎬 视频流媒体-国内
+  - RULE-SET,DanDanZan,🎬 视频流媒体-国内
+  - RULE-SET,Dandanplay,🎬 视频流媒体-国内
+  - RULE-SET,DouYin,🎬 视频流媒体-国内
+  - RULE-SET,Douyu,🎬 视频流媒体-国内
+  - RULE-SET,HWTV,🎬 视频流媒体-国内
+  - RULE-SET,HunanTV,🎬 视频流媒体-国内
+  - RULE-SET,IPTVMainland,🎬 视频流媒体-国内
+  - RULE-SET,Kantv,🎬 视频流媒体-国内
+  - RULE-SET,Ku6,🎬 视频流媒体-国内
+  - RULE-SET,KuaiShou,🎬 视频流媒体-国内
+  - RULE-SET,LeTV,🎬 视频流媒体-国内
+  - RULE-SET,Migu,🎬 视频流媒体-国内
+  - RULE-SET,PPTV,🎬 视频流媒体-国内
+  - RULE-SET,SMG,🎬 视频流媒体-国内
+  - RULE-SET,Sohu,🎬 视频流媒体-国内
+  - RULE-SET,TencentVideo,🎬 视频流媒体-国内
+  - RULE-SET,YiZhiBo,🎬 视频流媒体-国内
+  - RULE-SET,Youku,🎬 视频流媒体-国内
+  - RULE-SET,iQIYI,🎬 视频流媒体-国内
+  - RULE-SET,zhanqi,🎬 视频流媒体-国内
+  - RULE-SET,XingKongWuXian,🎬 视频流媒体-国内
+
+  # 视频流媒体 - 国外
+  - RULE-SET,Abema,🎥 视频流媒体-国外
+  - RULE-SET,AbemaTV,🎥 视频流媒体-国外
+  - RULE-SET,All4,🎥 视频流媒体-国外
+  - RULE-SET,AmazonPrimeVideo,🎥 视频流媒体-国外
+  - RULE-SET,Anime,🎥 视频流媒体-国外
+  - RULE-SET,ATTWatchTV,🎥 视频流媒体-国外
+  - RULE-SET,Bahamut,🎥 视频流媒体-国外
+  - RULE-SET,BiliBiliIntl,🎥 视频流媒体-国外
+  - RULE-SET,BrightCove,🎥 视频流媒体-国外
+  - RULE-SET,BritboxUK,🎥 视频流媒体-国外
+  - RULE-SET,CBS,🎥 视频流媒体-国外
+  - RULE-SET,CWSeed,🎥 视频流媒体-国外
+  - RULE-SET,CableTV,🎥 视频流媒体-国外
+  - RULE-SET,DAZN,🎥 视频流媒体-国外
+  - RULE-SET,Dailymotion,🎥 视频流媒体-国外
+  - RULE-SET,DiscoveryPlus,🎥 视频流媒体-国外
+  - RULE-SET,Disney,🎥 视频流媒体-国外
+  - RULE-SET,Dood,🎥 视频流媒体-国外
+  - RULE-SET,EHGallery,🎥 视频流媒体-国外
+  - RULE-SET,Emby,🎥 视频流媒体-国外
+  - RULE-SET,EncoreTVB,🎥 视频流媒体-国外
+  - RULE-SET,Espn,🎥 视频流媒体-国外
+  - RULE-SET,FOXNOW,🎥 视频流媒体-国外
+  - RULE-SET,FOXPlus,🎥 视频流媒体-国外
+  - RULE-SET,FuboTV,🎥 视频流媒体-国外
+  - RULE-SET,Funshion,🎥 视频流媒体-国外
+  - RULE-SET,HBO,🎥 视频流媒体-国外
+  - RULE-SET,HBOAsia,🎥 视频流媒体-国外
+  - RULE-SET,HBOHK,🎥 视频流媒体-国外
+  - RULE-SET,HBOUSA,🎥 视频流媒体-国外
+  - RULE-SET,HamiVideo,🎥 视频流媒体-国外
+  - RULE-SET,Hulu,🎥 视频流媒体-国外
+  - RULE-SET,HuluJP,🎥 视频流媒体-国外
+  - RULE-SET,HuluUSA,🎥 视频流媒体-国外
+  - RULE-SET,IPTVOther,🎥 视频流媒体-国外
+  - RULE-SET,ITV,🎥 视频流媒体-国外
+  - RULE-SET,Japonx,🎥 视频流媒体-国外
+  - RULE-SET,Jwplayer,🎥 视频流媒体-国外
+  - RULE-SET,KKTV,🎥 视频流媒体-国外
+  - RULE-SET,LiTV,🎥 视频流媒体-国外
+  - RULE-SET,LineTV,🎥 视频流媒体-国外
+  - RULE-SET,MeWatch,🎥 视频流媒体-国外
+  - RULE-SET,My5,🎥 视频流媒体-国外
+  - RULE-SET,NBC,🎥 视频流媒体-国外
+  - RULE-SET,NaverTV,🎥 视频流媒体-国外
+  - RULE-SET,Netflix,🎥 视频流媒体-国外
+  - RULE-SET,Niconico,🎥 视频流媒体-国外
+  - RULE-SET,NivodTV,🎥 视频流媒体-国外
+  - RULE-SET,NowE,🎥 视频流媒体-国外
+  - RULE-SET,Olevod,🎥 视频流媒体-国外
+  - RULE-SET,PBS,🎥 视频流媒体-国外
+  - RULE-SET,PandoraTV,🎥 视频流媒体-国外
+  - RULE-SET,ParamountPlus,🎥 视频流媒体-国外
+  - RULE-SET,Peacock,🎥 视频流媒体-国外
+  - RULE-SET,PrimeVideo,🎥 视频流媒体-国外
+  - RULE-SET,RTHK,🎥 视频流媒体-国外
+  - RULE-SET,SkyGO,🎥 视频流媒体-国外
+  - RULE-SET,Sling,🎥 视频流媒体-国外
+  - RULE-SET,TVB,🎥 视频流媒体-国外
+  - RULE-SET,TVer,🎥 视频流媒体-国外
+  - RULE-SET,TaiWanGood,🎥 视频流媒体-国外
+  - RULE-SET,TikTok,🎥 视频流媒体-国外
+  - RULE-SET,Twitch,🎥 视频流媒体-国外
+  - RULE-SET,VidolTV,🎥 视频流媒体-国外
+  - RULE-SET,VikACG,🎥 视频流媒体-国外
+  - RULE-SET,Viki,🎥 视频流媒体-国外
+  - RULE-SET,Vimeo,🎥 视频流媒体-国外
+  - RULE-SET,ViuTV,🎥 视频流媒体-国外
+  - RULE-SET,WeTV,🎥 视频流媒体-国外
+  - RULE-SET,YYeTs,🎥 视频流媒体-国外
+  - RULE-SET,Zee,🎥 视频流媒体-国外
+  - RULE-SET,ZeeTV,🎥 视频流媒体-国外
+  - RULE-SET,friDay,🎥 视频流媒体-国外
+  - RULE-SET,iQIYIIntl,🎥 视频流媒体-国外
+  - RULE-SET,myTVSUPER,🎥 视频流媒体-国外
+  - RULE-SET,Picacg,🎥 视频流媒体-国外
+  - RULE-SET,Picsee,🎥 视频流媒体-国外
+  - RULE-SET,Hpplay,🎥 视频流媒体-国外
+  - RULE-SET,HuaShuTV,🎥 视频流媒体-国外
+  - RULE-SET,iTalkBB,🎥 视频流媒体-国外
+  - RULE-SET,AsianMedia,🎥 视频流媒体-国外
+  - RULE-SET,GlobalMedia,🎥 视频流媒体-国外
+  - RULE-SET,ChinaMedia,🎥 视频流媒体-国外
+  - RULE-SET,UKMedia,🎥 视频流媒体-国外
+  - RULE-SET,USMedia,🎥 视频流媒体-国外
+
+  # 音乐平台 - 国内
+  - RULE-SET,HibyMusic,🎵 音乐平台-国内
+  - RULE-SET,KuKeMusic,🎵 音乐平台-国内
+  - RULE-SET,KugouKuwo,🎵 音乐平台-国内
+  - RULE-SET,NetEaseMusic,🎵 音乐平台-国内
+  - RULE-SET,TaiheMusic,🎵 音乐平台-国内
+  - RULE-SET,XiamiMusic,🎵 音乐平台-国内
+
+  # 音乐平台 - 国外
+  - RULE-SET,AppleMusic,🎧 音乐平台-国外
+  - RULE-SET,Beats,🎧 音乐平台-国外
+  - RULE-SET,Deezer,🎧 音乐平台-国外
+  - RULE-SET,JOOX,🎧 音乐平台-国外
+  - RULE-SET,KKBOX,🎧 音乐平台-国外
+  - RULE-SET,LastFM,🎧 音乐平台-国外
+  - RULE-SET,MOOV,🎧 音乐平台-国外
+  - RULE-SET,Pandora,🎧 音乐平台-国外
+  - RULE-SET,Qobuz,🎧 音乐平台-国外
+  - RULE-SET,SoundCloud,🎧 音乐平台-国外
+  - RULE-SET,Spotify,🎧 音乐平台-国外
+  - RULE-SET,TIDAL,🎧 音乐平台-国外
+  - RULE-SET,YouTubeMusic,🎧 音乐平台-国外
+
+  # 新闻媒体 - 国内
+  - RULE-SET,36kr,📰 新闻媒体-国内
+  - RULE-SET,6park,📰 新闻媒体-国内
+  - RULE-SET,8btc,📰 新闻媒体-国内
+  - RULE-SET,BoXun,📰 新闻媒体-国内
+  - RULE-SET,CaiXinChuanMei,📰 新闻媒体-国内
+  - RULE-SET,ChinaNews,📰 新闻媒体-国内
+  - RULE-SET,FengHuangWang,📰 新闻媒体-国内
+
+  # 新闻媒体 - 国外
+  - RULE-SET,9News,🌍 新闻媒体-国外
+  - RULE-SET,9to5,🌍 新闻媒体-国外
+  - RULE-SET,ABC,🌍 新闻媒体-国外
+  - RULE-SET,AFP,🌍 新闻媒体-国外
+  - RULE-SET,ALJazeera,🌍 新闻媒体-国外
+  - RULE-SET,AnandTech,🌍 新闻媒体-国外
+  - RULE-SET,Asahi,🌍 新闻媒体-国外
+  - RULE-SET,BBC,🌍 新闻媒体-国外
+  - RULE-SET,Bloomberg,🌍 新闻媒体-国外
+  - RULE-SET,Cnet,🌍 新闻媒体-国外
+  - RULE-SET,Dailymail,🌍 新闻媒体-国外
+  - RULE-SET,FlipBoard,🌍 新闻媒体-国外
+  - RULE-SET,Fox,🌍 新闻媒体-国外
+  - RULE-SET,Huffpost,🌍 新闻媒体-国外
+  - RULE-SET,IMDB,🌍 新闻媒体-国外
+  - RULE-SET,LondonReal,🌍 新闻媒体-国外
+  - RULE-SET,Manorama,🌍 新闻媒体-国外
+  - RULE-SET,NYPost,🌍 新闻媒体-国外
+  - RULE-SET,NYTimes,🌍 新闻媒体-国外
+  - RULE-SET,Nikkei,🌍 新闻媒体-国外
+  - RULE-SET,ThomsonReuters,🌍 新闻媒体-国外
+  - RULE-SET,VOA,🌍 新闻媒体-国外
+  - RULE-SET,Voxmedia,🌍 新闻媒体-国外
+  - RULE-SET,Americasvoice,🌍 新闻媒体-国外
+
+  # ==============================
+  # 4. 开发、工具与求职 (Productivity)
+  # ==============================
+  # 开发与云服务 - 国内
+  - RULE-SET,CSDN,💻 开发与云服务-国内
+  - RULE-SET,Gitee,💻 开发与云服务-国内
+  - RULE-SET,JueJin,💻 开发与云服务-国内
+  - RULE-SET,Maocloud,💻 开发与云服务-国内
+  - RULE-SET,QiNiuYun,💻 开发与云服务-国内
+  - RULE-SET,QingCloud,💻 开发与云服务-国内
+  - RULE-SET,Teambition,💻 开发与云服务-国内
+  - RULE-SET,UCloud,💻 开发与云服务-国内
+  - RULE-SET,UPYun,💻 开发与云服务-国内
+
+  # 开发与云服务 - 国外
+  - RULE-SET,Anaconda,☁️ 开发与云服务-国外
+  - RULE-SET,Atlassian,☁️ 开发与云服务-国外
+  - RULE-SET,Atomdata,☁️ 开发与云服务-国外
+  - RULE-SET,Cloud,☁️ 开发与云服务-国外
+  - RULE-SET,Cloudflare,☁️ 开发与云服务-国外
+  - RULE-SET,Collabora,☁️ 开发与云服务-国外
+  - RULE-SET,Contentful,☁️ 开发与云服务-国外
+  - RULE-SET,Developer,☁️ 开发与云服务-国外
+  - RULE-SET,Docker,☁️ 开发与云服务-国外
+  - RULE-SET,Electron,☁️ 开发与云服务-国外
+  - RULE-SET,Figma,☁️ 开发与云服务-国外
+  - RULE-SET,GitBook,☁️ 开发与云服务-国外
+  - RULE-SET,GitHub,☁️ 开发与云服务-国外
+  - RULE-SET,GitLab,☁️ 开发与云服务-国外
+  - RULE-SET,HashiCorp,☁️ 开发与云服务-国外
+  - RULE-SET,Heroku,☁️ 开发与云服务-国外
+  - RULE-SET,Intercom,☁️ 开发与云服务-国外
+  - RULE-SET,Jetbrains,☁️ 开发与云服务-国外
+  - RULE-SET,Jfrog,☁️ 开发与云服务-国外
+  - RULE-SET,Jquery,☁️ 开发与云服务-国外
+  - RULE-SET,Jsdelivr,☁️ 开发与云服务-国外
+  - RULE-SET,Notion,☁️ 开发与云服务-国外
+  - RULE-SET,Npmjs,☁️ 开发与云服务-国外
+  - RULE-SET,Oracle,☁️ 开发与云服务-国外
+  - RULE-SET,Oreilly,☁️ 开发与云服务-国外
+  - RULE-SET,Python,☁️ 开发与云服务-国外
+  - RULE-SET,Salesforce,☁️ 开发与云服务-国外
+  - RULE-SET,SourceForge,☁️ 开发与云服务-国外
+  - RULE-SET,Stackexchange,☁️ 开发与云服务-国外
+  - RULE-SET,SublimeText,☁️ 开发与云服务-国外
+  - RULE-SET,Ubuntu,☁️ 开发与云服务-国外
+  - RULE-SET,Vercel,☁️ 开发与云服务-国外
+  - RULE-SET,WIX,☁️ 开发与云服务-国外
+  - RULE-SET,Zendesk,☁️ 开发与云服务-国外
+  - RULE-SET,Zoho,☁️ 开发与云服务-国外
+
+  # 工具网盘 - 国内
+  - RULE-SET,115,🛠️ 工具网盘-国内
+  - RULE-SET,Apifox,🛠️ 工具网盘-国内
+  - RULE-SET,Antutu,🛠️ 工具网盘-国内
+  - RULE-SET,Bootcss,🛠️ 工具网盘-国内
+  - RULE-SET,Cake,🛠️ 工具网盘-国内
+  - RULE-SET,Camera360,🛠️ 工具网盘-国内
+  - RULE-SET,ChengTongWangPan,🛠️ 工具网盘-国内
+  - RULE-SET,Coolapk,🛠️ 工具网盘-国内
+  - RULE-SET,Fiio,🛠️ 工具网盘-国内
+  - RULE-SET,JianGuoYun,🛠️ 工具网盘-国内
+  - RULE-SET,LanZouYun,🛠️ 工具网盘-国内
+  - RULE-SET,LuDaShi,🛠️ 工具网盘-国内
+  - RULE-SET,MeiTu,🛠️ 工具网盘-国内
+  - RULE-SET,MeiZu,🛠️ 工具网盘-国内
+  - RULE-SET,Mojitianqi,🛠️ 工具网盘-国内
+  - RULE-SET,WiFiMaster,🛠️ 工具网盘-国内
+  - RULE-SET,WoLai,🛠️ 工具网盘-国内
+  - RULE-SET,Xunlei,🛠️ 工具网盘-国内
+  - RULE-SET,Wteam,🛠️ 工具网盘-国内
+  - RULE-SET,ZhangYue,🛠️ 工具网盘-国内
+  - RULE-SET,Keep,🛠️ 工具网盘-国内
+
+  # 工具网盘 - 国外
+  - RULE-SET,1337x,📦 工具网盘-国外
+  - RULE-SET,APKCombo,📦 工具网盘-国外
+  - RULE-SET,Accuweather,📦 工具网盘-国外
+  - RULE-SET,Acplay,📦 工具网盘-国外
+  - RULE-SET,Adobe,📦 工具网盘-国外
+  - RULE-SET,AdobeActivation,📦 工具网盘-国外
+  - RULE-SET,Apkpure,📦 工具网盘-国外
+  - RULE-SET,Dropbox,📦 工具网盘-国外
+  - RULE-SET,Dubox,📦 工具网盘-国外
+  - RULE-SET,Duckduckgo,📦 工具网盘-国外
+  - RULE-SET,Dynu,📦 工具网盘-国外
+  - RULE-SET,Emojipedia,📦 工具网盘-国外
+  - RULE-SET,Faronics,📦 工具网盘-国外
+  - RULE-SET,LastPass,📦 工具网盘-国外
+  - RULE-SET,MEGA,📦 工具网盘-国外
+  - RULE-SET,Mail,📦 工具网盘-国外
+  - RULE-SET,Mailru,📦 工具网盘-国外
+  - RULE-SET,Overcast,📦 工具网盘-国外
+  - RULE-SET,PikPak,📦 工具网盘-国外
+  - RULE-SET,Protonmail,📦 工具网盘-国外
+  - RULE-SET,Rarbg,📦 工具网盘-国外
+  - RULE-SET,Spark,📦 工具网盘-国外
+  - RULE-SET,TeamViewer,📦 工具网盘-国外
+  - RULE-SET,TeraBox,📦 工具网盘-国外
+  - RULE-SET,Wikimedia,📦 工具网盘-国外
+  - RULE-SET,Wikipedia,📦 工具网盘-国外
+  - RULE-SET,Wordpress,📦 工具网盘-国外
+  - RULE-SET,Yandex,📦 工具网盘-国外
+  - RULE-SET,RemoteDesktop,📦 工具网盘-国外
+  - RULE-SET,Naver,📦 工具网盘-国外
+  - RULE-SET,Tmdb,📦 工具网盘-国外
+  - RULE-SET,Download,📦 工具网盘-国外
+
+  # 求职教育 - 国内
+  - RULE-SET,17zuoye,🎓 求职教育-国内
+  - RULE-SET,51Job,🎓 求职教育-国内
+  - RULE-SET,51nod,🎓 求职教育-国内
+  - RULE-SET,CNKI,🎓 求职教育-国内
+  - RULE-SET,ShiJiChaoXing,🎓 求职教育-国内
+  - RULE-SET,Wanfang,🎓 求职教育-国内
+  - RULE-SET,WenJuanXing,🎓 求职教育-国内
+  - RULE-SET,XueErSi,🎓 求职教育-国内
+  - RULE-SET,YuanFuDao,🎓 求职教育-国内
+
+  # 求职教育 - 国外
+  - RULE-SET,Duolingo,🏫 求职教育-国外
+  - RULE-SET,FreeCodeCamp,🏫 求职教育-国外
+  - RULE-SET,GlobalScholar,🏫 求职教育-国外
+  - RULE-SET,HKedcity,🏫 求职教育-国外
+  - RULE-SET,Udacity,🏫 求职教育-国外
+  - RULE-SET,Reabble,🏫 求职教育-国外
+  - RULE-SET,Scholar,🏫 求职教育-国外
+  - RULE-SET,W3schools,🏫 求职教育-国外
+
+  # ==============================
+  # 5. 生活、电商与金融 (Life & Commerce)
+  # ==============================
+  # 金融服务 - 国内
+  - RULE-SET,AliPay,💰 金融服务-国内
+  - RULE-SET,BOC,💰 金融服务-国内
+  - RULE-SET,BOCOM,💰 金融服务-国内
+  - RULE-SET,CCB,💰 金融服务-国内
+  - RULE-SET,CEB,💰 金融服务-国内
+  - RULE-SET,CGB,💰 金融服务-国内
+  - RULE-SET,CKJR,💰 金融服务-国内
+  - RULE-SET,CMB,💰 金融服务-国内
+  - RULE-SET,ICBC,💰 金融服务-国内
+  - RULE-SET,PSBC,💰 金融服务-国内
+  - RULE-SET,PingAn,💰 金融服务-国内
+  - RULE-SET,UnionPay,💰 金融服务-国内
+  - RULE-SET,EastMoney,💰 金融服务-国内
+  - RULE-SET,TaiKang,💰 金融服务-国内
+  - RULE-SET,XueQiu,💰 金融服务-国内
+
+  # 金融服务 - 国外
+  - RULE-SET,VISA,💳 金融服务-国外
+  - RULE-SET,Stripe,💳 金融服务-国外
+  - RULE-SET,PayPal,💳 金融服务-国外
+  - RULE-SET,Binance,💳 金融服务-国外
+  - RULE-SET,OKX,💳 金融服务-国外
+  - RULE-SET,Crypto,💳 金融服务-国外
+  - RULE-SET,Cryptocurrency,💳 金融服务-国外
+  - RULE-SET,TigerFintech,💳 金融服务-国外
+
+  # 电商购物 - 国内
+  - RULE-SET,Alibaba,🛒 电商购物-国内
+  - RULE-SET,AmazonCN,🛒 电商购物-国内
+  - RULE-SET,CaiNiao,🛒 电商购物-国内
+  - RULE-SET,DangDang,🛒 电商购物-国内
+  - RULE-SET,Eleme,🛒 电商购物-国内
+  - RULE-SET,FeiZhu,🛒 电商购物-国内
+  - RULE-SET,HeMa,🛒 电商购物-国内
+  - RULE-SET,JingDong,🛒 电商购物-国内
+  - RULE-SET,Mogujie,🛒 电商购物-国内
+  - RULE-SET,Pinduoduo,🛒 电商购物-国内
+  - RULE-SET,SuNing,🛒 电商购物-国内
+  - RULE-SET,Vancl,🛒 电商购物-国内
+  - RULE-SET,VipShop,🛒 电商购物-国内
+  - RULE-SET,XianYu,🛒 电商购物-国内
+  - RULE-SET,YouZan,🛒 电商购物-国内
+  - RULE-SET,ZhuanZhuan,🛒 电商购物-国内
+
+  # 电商购物 - 国外
+  - RULE-SET,Adidas,🛍️ 电商购物-国外
+  - RULE-SET,Amazon,🛍️ 电商购物-国外
+  - RULE-SET,AmazonIP,🛍️ 电商购物-国外
+  - RULE-SET,BeStore,🛍️ 电商购物-国外
+  - RULE-SET,Bestbuy,🛍️ 电商购物-国外
+  - RULE-SET,Gucci,🛍️ 电商购物-国外
+  - RULE-SET,IKEA,🛍️ 电商购物-国外
+  - RULE-SET,MOMOShop,🛍️ 电商购物-国外
+  - RULE-SET,McDonalds,🛍️ 电商购物-国外
+  - RULE-SET,Nike,🛍️ 电商购物-国外
+  - RULE-SET,PChome,🛍️ 电商购物-国外
+  - RULE-SET,PChomeTW,🛍️ 电商购物-国外
+  - RULE-SET,Rakuten,🛍️ 电商购物-国外
+  - RULE-SET,Shopee,🛍️ 电商购物-国外
+  - RULE-SET,Shopify,🛍️ 电商购物-国外
+  - RULE-SET,Starbucks,🛍️ 电商购物-国外
+  - RULE-SET,eBay,🛍️ 电商购物-国外
+  - RULE-SET,Movefree,🛍️ 电商购物-国外
+  - RULE-SET,Aerogard,🛍️ 电商购物-国外
+  - RULE-SET,AirWick,🛍️ 电商购物-国外
+
+  # 出行物流 - 国内
+  - RULE-SET,12306,✈️ 出行物流-国内
+  - RULE-SET,AirChina,✈️ 出行物流-国内
+  - RULE-SET,DiDi,✈️ 出行物流-国内
+  - RULE-SET,GaoDe,✈️ 出行物流-国内
+  - RULE-SET,HaiNanHangKong,✈️ 出行物流-国内
+  - RULE-SET,KuaiDi100,✈️ 出行物流-国内
+  - RULE-SET,SFExpress,✈️ 出行物流-国内
+  - RULE-SET,XieCheng,✈️ 出行物流-国内
+  - RULE-SET,TongCheng,✈️ 出行物流-国内
+
+  # 出行物流 - 国外
+  - RULE-SET,Global,🗺️ 出行物流-国外
+  - RULE-SET,GlobalMedia,🗺️ 出行物流-国外
+  - RULE-SET,PrivateTracker,🗺️ 出行物流-国外
+  - RULE-SET,Proxy,🗺️ 出行物流-国外
+  - RULE-SET,ProxyLite,🗺️ 出行物流-国外
+
+  # 企业网站 - 国内
+  - RULE-SET,360,🏢 企业网站-国内
+  - RULE-SET,4Paradigm,🏢 企业网站-国内
+  - RULE-SET,Afdian,🏢 企业网站-国内
+  - RULE-SET,AiQiCha,🏢 企业网站-国内
+  - RULE-SET,Baidu,🏢 企业网站-国内
+  - RULE-SET,ByteDance,🏢 企业网站-国内
+  - RULE-SET,Geely,🏢 企业网站-国内
+  - RULE-SET,Huawei,🏢 企业网站-国内
+  - RULE-SET,KingSmith,🏢 企业网站-国内
+  - RULE-SET,Kingsoft,🏢 企业网站-国内
+  - RULE-SET,Lenovo,🏢 企业网站-国内
+  - RULE-SET,LvMiLianChuang,🏢 企业网站-国内
+  - RULE-SET,NetEase,🏢 企业网站-国内
+  - RULE-SET,OPPO,🏢 企业网站-国内
+  - RULE-SET,OnePlus,🏢 企业网站-国内
+  - RULE-SET,OuPeng,🏢 企业网站-国内
+  - RULE-SET,Sina,🏢 企业网站-国内
+  - RULE-SET,TCL,🏢 企业网站-国内
+  - RULE-SET,Vivo,🏢 企业网站-国内
+  - RULE-SET,XiaoMi,🏢 企业网站-国内
+  - RULE-SET,ZhongGuoShiHua,🏢 企业网站-国内
+  - RULE-SET,ZhongXingTongXun,🏢 企业网站-国内
+  - RULE-SET,ifanr,🏢 企业网站-国内
+  - RULE-SET,58TongCheng,🏢 企业网站-国内
+  - RULE-SET,AnTianKeJi,🏢 企业网站-国内
+  - RULE-SET,BaiShanYunKeJi,🏢 企业网站-国内
+  - RULE-SET,DiLianWangLuo,🏢 企业网站-国内
+  - RULE-SET,DiSiFanShi,🏢 企业网站-国内
+  - RULE-SET,DingTalk,🏢 企业网站-国内
+  - RULE-SET,DingXiangYuan,🏢 企业网站-国内
+  - RULE-SET,KuaiDi100,🏢 企业网站-国内
+  - RULE-SET,MeiZu,🏢 企业网站-国内
+  - RULE-SET,RuanMei,🏢 企业网站-国内
+  - RULE-SET,UC,🏢 企业网站-国内
+  - RULE-SET,WangSuKeJi,🏢 企业网站-国内
+  - RULE-SET,ZhongWeiShiJi,🏢 企业网站-国内
+  - RULE-SET,iFlytek,🏢 企业网站-国内
+  - RULE-SET,WeType,🏢 企业网站-国内
+
+  # 企业网站 - 国外
+  - RULE-SET,AMD,👔 企业网站-国外
+  - RULE-SET,AMP,👔 企业网站-国外
+  - RULE-SET,AOL,👔 企业网站-国外
+  - RULE-SET,Acer,👔 企业网站-国外
+  - RULE-SET,BMW,👔 企业网站-国外
+  - RULE-SET,Canon,👔 企业网站-国外
+  - RULE-SET,Cisco,👔 企业网站-国外
+  - RULE-SET,Dell,👔 企业网站-国外
+  - RULE-SET,Gigabyte,👔 企业网站-国外
+  - RULE-SET,HP,👔 企业网站-国外
+  - RULE-SET,IBM,👔 企业网站-国外
+  - RULE-SET,Intel,👔 企业网站-国外
+  - RULE-SET,LG,👔 企业网站-国外
+  - RULE-SET,Mozilla,👔 企业网站-国外
+  - RULE-SET,Nvidia,👔 企业网站-国外
+  - RULE-SET,OP,👔 企业网站-国外
+  - RULE-SET,Opera,👔 企业网站-国外
+  - RULE-SET,Qualcomm,👔 企业网站-国外
+  - RULE-SET,Samsung,👔 企业网站-国外
+  - RULE-SET,Sony,👔 企业网站-国外
+  - RULE-SET,Tesla,👔 企业网站-国外
+  - RULE-SET,Agora,👔 企业网站-国外
+
+  - RULE-SET,applications,🖥️ 应用程序
+
+  # ==============================
+  # 6. 专项与其他 (Special & Others)
+  # ==============================
+  # 游戏平台 - 国内
+  - RULE-SET,17173,🎮 游戏平台-国内
+  - RULE-SET,178,🎮 游戏平台-国内
+  - RULE-SET,3dm,🎮 游戏平台-国内
+  - RULE-SET,4399,🎮 游戏平台-国内
+  - RULE-SET,Ali213,🎮 游戏平台-国内
+  - RULE-SET,ChunYou,🎮 游戏平台-国内
+  - RULE-SET,DuoWan,🎮 游戏平台-国内
+  - RULE-SET,HoYoverse,🎮 游戏平台-国内
+  - RULE-SET,SteamCN,🎮 游戏平台-国内
+  - RULE-SET,TapTap,🎮 游戏平台-国内
+  - RULE-SET,U17,🎮 游戏平台-国内
+  - RULE-SET,WanKaHuanJu,🎮 游戏平台-国内
+  - RULE-SET,WanMeiShiJie,🎮 游戏平台-国内
+
+  # 游戏平台 - 国外
+  - RULE-SET,2KGames,🕹️ 游戏平台-国外
+  - RULE-SET,Assassin'sCreed,🕹️ 游戏平台-国外
+  - RULE-SET,Battle,🕹️ 游戏平台-国外
+  - RULE-SET,Blizzard,🕹️ 游戏平台-国外
+  - RULE-SET,DMM,🕹️ 游戏平台-国外
+  - RULE-SET,DiabloIII,🕹️ 游戏平台-国外
+  - RULE-SET,EA,🕹️ 游戏平台-国外
+  - RULE-SET,Epic,🕹️ 游戏平台-国外
+  - RULE-SET,Game,🕹️ 游戏平台-国外
+  - RULE-SET,Garena,🕹️ 游戏平台-国外
+  - RULE-SET,Gog,🕹️ 游戏平台-国外
+  - RULE-SET,Hearthstone,🕹️ 游戏平台-国外
+  - RULE-SET,HeroesoftheStorm,🕹️ 游戏平台-国外
+  - RULE-SET,Majsoul,🕹️ 游戏平台-国外
+  - RULE-SET,Nintendo,🕹️ 游戏平台-国外
+  - RULE-SET,Origin,🕹️ 游戏平台-国外
+  - RULE-SET,Overwatch,🕹️ 游戏平台-国外
+  - RULE-SET,PlayStation,🕹️ 游戏平台-国外
+  - RULE-SET,Purikonejp,🕹️ 游戏平台-国外
+  - RULE-SET,Riot,🕹️ 游戏平台-国外
+  - RULE-SET,Rockstar,🕹️ 游戏平台-国外
+  - RULE-SET,StarCraftII,🕹️ 游戏平台-国外
+  - RULE-SET,Steam,🕹️ 游戏平台-国外
+  - RULE-SET,Supercell,🕹️ 游戏平台-国外
+  - RULE-SET,UBI,🕹️ 游戏平台-国外
+  - RULE-SET,Ubisoft,🕹️ 游戏平台-国外
+  - RULE-SET,Unity,🕹️ 游戏平台-国外
+  - RULE-SET,WildRift,🕹️ 游戏平台-国外
+  - RULE-SET,WorldofWarcraft,🕹️ 游戏平台-国外
+  - RULE-SET,Xbox,🕹️ 游戏平台-国外
+
+  # 网络测速
+  - RULE-SET,ChinaTest,📈 网络测速
+  - RULE-SET,Speedtest,📈 网络测速
+
+  # ==============================
+  # 7. 通用区域与漏网之鱼 (General & Fallback)
+  # ==============================
+  # 通用国内部分
+  - RULE-SET,China,DIRECT
+  - RULE-SET,ChinaDNS,DIRECT
+  - RULE-SET,ChinaIPs,DIRECT
+  - RULE-SET,ChinaIPsBGP,DIRECT
+  - RULE-SET,ChinaMax,DIRECT
+  - RULE-SET,ChinaMaxNoIP,DIRECT
+  - RULE-SET,ChinaMaxNoMedia,DIRECT
+  - RULE-SET,ChinaNoMedia,DIRECT
+  - RULE-SET,Lan,DIRECT
+  - RULE-SET,Direct,DIRECT
+  - RULE-SET,ChinaMobile,DIRECT
+  - RULE-SET,ChinaTelecom,DIRECT
+  - RULE-SET,ChinaUnicom,DIRECT
+  - RULE-SET,WangSuKeJi,DIRECT
+
+  # 通用国际部分
+  - RULE-SET,Akamai,🚀 节点选择
+  - RULE-SET,Cloudflarecn,🚀 节点选择
+  - RULE-SET,DigitalOcean,🚀 节点选择
+  - RULE-SET,HKBN,🚀 节点选择
+  - RULE-SET,Limelight,🚀 节点选择
+  - RULE-SET,PCCW,🚀 节点选择
+  - RULE-SET,SmarTone,🚀 节点选择
+  - RULE-SET,Verizon,🚀 节点选择
+
+  # 漏网之鱼 - 国内
+  - RULE-SET,3Type,DIRECT
+  - RULE-SET,Anjuke,DIRECT
+  - RULE-SET,Arphic,DIRECT
+  - RULE-SET,BaiFenDian,DIRECT
+  - RULE-SET,CAS,DIRECT
+  - RULE-SET,ChuangKeTie,DIRECT
+  - RULE-SET,DianCeWangKe,DIRECT
+  - RULE-SET,FangZhengDianZi,DIRECT
+  - RULE-SET,FengXiaWangLuo,DIRECT
+  - RULE-SET,GovCN,DIRECT
+  - RULE-SET,GuiGuDongLi,DIRECT
+  - RULE-SET,HanYi,DIRECT
+  - RULE-SET,HuanJu,DIRECT
+  - RULE-SET,JiGuangTuiSong,DIRECT
+  - RULE-SET,JianShu,DIRECT
+  - RULE-SET,JinJiangWenXue,DIRECT
+  - RULE-SET,KouDaiShiShang,DIRECT
+  - RULE-SET,LeJu,DIRECT
+  - RULE-SET,LianMeng,DIRECT
+  - RULE-SET,MIUIPrivacy,DIRECT
+  - RULE-SET,MingLueZhaoHui,DIRECT
+  - RULE-SET,Qyyjt,DIRECT
+  - RULE-SET,ShangHaiJuXiao,DIRECT
+  - RULE-SET,Shanling,DIRECT
+  - RULE-SET,ShenMa,DIRECT
+  - RULE-SET,ShiNongZhiKe,DIRECT
+  - RULE-SET,SuiShiChuanMei,DIRECT
+  - RULE-SET,TianTianKanKan,DIRECT
+  - RULE-SET,TianWeiChengXin,DIRECT
+  - RULE-SET,TianYaForum,DIRECT
+  - RULE-SET,WanKaHuanJu,DIRECT
+  - RULE-SET,WangXinKeJi,DIRECT
+  - RULE-SET,WeiZhiYunDong,DIRECT
+  - RULE-SET,XiaoGouKeJi,DIRECT
+  - RULE-SET,XiaoYuanKeJi,DIRECT
+  - RULE-SET,XueQiu,DIRECT
+  - RULE-SET,YiChe,DIRECT
+  - RULE-SET,YiXiaKeJi,DIRECT
+  - RULE-SET,YouMengChuangXiang,DIRECT
+  - RULE-SET,YunFanJiaSu,DIRECT
+  - RULE-SET,ZhiYinManKe,DIRECT
+  - RULE-SET,ZhiYunZhong,DIRECT
+  - RULE-SET,ZhongYuanYiShang,DIRECT
+
+  # 漏网之鱼 - 国际
+  - RULE-SET,Anonv,🐟 漏网之鱼
+  - RULE-SET,Bing,🐟 漏网之鱼
+  - RULE-SET,Classic,🐟 漏网之鱼
+  - RULE-SET,Chromecast,🐟 漏网之鱼
+  - RULE-SET,Embl,🐟 漏网之鱼
+  - RULE-SET,FitnessPlus,🐟 漏网之鱼
+  - RULE-SET,Haveibeenpwned,🐟 漏网之鱼
+  - RULE-SET,Himalaya,🐟 漏网之鱼
+  - RULE-SET,Imgur,🐟 漏网之鱼
+  - RULE-SET,Linguee,🐟 漏网之鱼
+  - RULE-SET,LivePerson,🐟 漏网之鱼
+  - RULE-SET,Logitech,🐟 漏网之鱼
+  - RULE-SET,NGAA,🐟 漏网之鱼
+  - RULE-SET,NTPService,🐟 漏网之鱼
+  - RULE-SET,Privacy,🐟 漏网之鱼
+  - RULE-SET,Scaleflex,🐟 漏网之鱼
+  - RULE-SET,STUN,🐟 漏网之鱼
+  - RULE-SET,U17,🐟 漏网之鱼
+  - RULE-SET,Vancl,🐟 漏网之鱼
+
+  # 基础分流
+  - RULE-SET,direct,DIRECT
+  - RULE-SET,lancidr,DIRECT
+  - RULE-SET,cncidr,DIRECT
+  - GEOIP,CN,DIRECT
+  - GEOSITE,cn,DIRECT # 中国大陆域名直连
+
+  # UDP 443/3478 流量兜底 (移至规则末尾，防止截断域名规则)
+  # - AND,((NETWORK,UDP),(DST-PORT,443),(NOT,((GEOIP,CN)))),🚀 节点选择
+  # - AND,((NETWORK,UDP),(DST-PORT,443),(GEOIP,CN)),DIRECT
+  - AND,((NETWORK,UDP),(DST-PORT,443)),REJECT
+  # - AND,((NETWORK,UDP),(DST-PORT,3478)),🚀 节点选择
+  - MATCH,🚀 节点选择
+
+dns:
+  enable: true
+  prefer-h3: false # DOH 优先使用 http/3
+  use-hosts: false # 是否回应配置中的 hosts，默认 true
+  use-system-hosts: false # 是否查询系统 hosts，默认 true，我们不用系统 hosts
+  ipv6: false # 建议关闭 IPv6，因为 IPv6 经常是 DNS 泄漏的罪魁祸首
+  listen: 0.0.0.0:53
+  enhanced-mode: fake-ip # 必须使用 fake-ip 模式防止泄漏
+
+  # Fake-IP 范围
+  fake-ip-range: 198.18.0.1/16
+  fake-ip-filter-mode: blacklist
+
+  # 排除名单：这些域名不使用 Fake-IP，直接解析真实 IP（防止某些软件崩溃）
+  fake-ip-filter:
+    - "+.lan"
+    - "+.local"
+    - "+.arpa"
+    - "+.in-addr.arpa"
+    - "time.*.com"
+    - "ntp.*.com"
+    - "dns.google"
+    - "dns.alidns.com"
+    - "+.srv.nintendo.net"
+    - "+.stun.playstation.net"
+    - "*.msftncs.com"
+    - "*.msftconnecttest.com"
+    - "localhost.ptlogin2.qq.com"
+    - "work.weixin.qq.com"
+
+  # 配置后面的nameserver、fallback和nameserver-policy向dns服务器的连接过程是否遵守遵守rules规则
+  # 如果为false（默认值）则这三部分的dns服务器在未特别指定的情况下会直连
+  # 如果为true，将会按照rules的规则匹配链接方式（走代理或直连），如果有特别指定则任然以指定值为准
+  # 仅当proxy-server-nameserver非空时可以开启此选项, 强烈不建议和prefer-h3一起使用
+  # 此外，这三者配置中的dns服务器如果出现域名会采用default-nameserver配置项解析，也请确保正确配置default-nameserver
+  respect-rules: true
+
+  # 默认 DNS 服务器，主要用于解析 DoH/DoT 的域名
+  default-nameserver:
+    - system
+    - 223.5.5.5
+    - 119.29.29.29
+    - 8.8.8.8
+    - 1.1.1.1
+    - 2400:3200::1
+    - 2001:4860:4860::8888
+
+  direct-nameserver: []
+  direct-nameserver-follow-policy: true
+
+  # 2. 基础 DNS (作为兜底，不建议放太多)
+  nameserver:
+    - https://hk-hkg.doh.sb/dns-query
+    - https://doh.dns.sb/dns-query
+    - https://1.0.0.1/dns-query
+    - https://1.1.1.1/dns-query
+    - https://cloudflare-dns.com/dns-query
+    # - 1.1.1.1
+    # - 8.8.8.8
+
+  # 3. 强制分流：实现真正的 DNS 隔离
+  # nameserver-policy:
+  #   # 所有国内域名 -> 阿里/腾讯 DNS (直连)
+  #   "geosite:cn":
+  #     - 223.5.5.5
+  #     - 119.29.29.29
+  #     - "https://dns.alidns.com/dns-query"
+  #   # 强制让所有被识别为直连的规则走纯 IP DNS，禁止使用 DoH 导致 interface not found
+  #   "rule-set:direct":
+  #     - 223.5.5.5
+  #     - 119.29.29.29
+  #   # 所有国外域名 -> Cloudflare/Google (强制走代理)
+  #   "geosite:geolocation-!cn":
+  #     - "https://1.1.1.1/dns-query#PROXY"
+  #     - "https://8.8.8.8/dns-query#PROXY"
+  #   # 常见的私有/局域网域名
+  #   "geosite:private":
+  #     - system
+  #     - 223.5.5.5
+
+  # 4. Fallback (备选加密 DNS)
+  fallback:
+    - https://doh.dns.sb/dns-query
+    - https://1.0.0.1/dns-query
+    - https://1.1.1.1/dns-query
+    - https://cloudflare-dns.com/dns-query
+    - https://dns.cloudflare.com/dns-query#PROXY
+    - https://dns.google/dns-query#PROXY
+    - tls://8.8.8.8#PROXY
+    - tls://1.1.1.1#PROXY
+  proxy-server-nameserver:
+    - 1.1.1.1
+    - 1.0.0.1
+    - 8.8.8.8
+    # - "https://223.5.5.5/dns-query#h3=true"
+    # - "https://223.6.6.6/dns-query#h3=true"
+    - https://dns.cloudflare.com/dns-query
+    - https://dns.google/dns-query
+    - https://hk-hkg.doh.sb/dns-query
+    - https://doh.dns.sb/dns-query
+    - https://1.0.0.1/dns-query
+    - https://1.1.1.1/dns-query
+    - https://cloudflare-dns.com/dns-query
+    - https://doh.pub/dns-query
+    - https://dns.alidns.com/dns-query
+    - tls://223.5.5.5
+
+  # 判定污染的逻辑：如果 nameserver 返回的 IP 不在这些国家，则认为被污染，触发 fallback
+  fallback-filter:
+    geoip: true
+    geoip-code: CN
+    # domain:
+    #   - "+.google.com"
+    #   - "+.facebook.com"
+    #   - "+.twitter.com"
+    #   - "+.youtube.com"
+    ipcidr:
+      - 240.0.0.0/4
+
+# 配合 DNS 配置的 TUN 模式设置
+tun:
+  enable: true
+  stack: gvisor # 或 system/gvisor/mixed
+  auto-route: true
+  auto-detect-interface: true
+  dns-hijack:
+    - any:53 # 强行拦截所有 53 端口请求，将其交给上面的 dns 配置处理
+    - tcp://any:53
+# -----------------------------
+# 使用说明（Template 使用与占位符替换示例）
+# -----------------------------
+# 占位符说明：
+# - `__PROXIES__` : 订阅转换器应将此占位符替换为完整的 `proxies:` 列表（YAML 列表格式），包括每个节点的所有字段。
+# - `__PROXY_NAMES__` : 用于代理分组，替换为代理名称的逗号/方括号列表（无需引号或带引号均可），例如："节点1, 节点2" 或 ["节点1","节点2"]。
+# - `__PROXY_GROUPS__` :（可选）如果你想让生成器替换整个 `proxy-groups` 区块，可以使用此占位符。
+
+# 最小替换示例（Mustache 风格或简单模板替换都可）：
+# 模板片段：
+# proxies: __PROXIES__
+# proxy-groups:
+#   - name: "Proxy"
+#     type: select
+#     proxies: [__PROXY_NAMES__]
+#
+# Mustache 示例（伪代码）：
+# {
+#   "proxies": {{#nodes}}
+#   - name: "{{name}}"
+#     type: {{type}}
+#     server: {{server}}
+#     port: {{port}}
+#   {{/nodes}}
+# }
+
+# PowerShell (pwsh) 简单替换示例：
+# 假设已有 `proxies.yaml` 内容（已是 YAML 列表），将其注入模板中的 `__PROXIES__`：
+#
+# $tpl = Get-Content -Raw .\clash\template.yaml
+# $proxies = Get-Content -Raw .\out\proxies.yaml
+# $tpl = $tpl -replace '__PROXIES__', $proxies
+# $tpl | Set-Content .\clash\generated.yaml
+#
+# 将代理名称列表注入 `__PROXY_NAMES__`（逗号或 JSON 数组形式）：
+# $names = '"节点1","节点2","节点3"'   # 或者生成 JSON 数组
+# $tpl = $tpl -replace '\[__PROXY_NAMES__\]', "[$names]"
+
+# 注意与建议：
+# - 确保注入的 YAML 格式正确（缩进与换行），否则 clash 解析会失败。
+# - 推荐先将 `__PROXIES__` 替换为多行 YAML（包含每个代理完整字段），再将 `__PROXY_NAMES__` 替换为代理名称数组。
+# - 如果需要 `proxy-providers` 功能，请在 `proxy-providers:` 下以 YAML 对象形式填充，并在 `proxy-groups` 中使用 `PROXY-PROVIDER-NAME`。
+
+# 示例：最终生成后的关键段（缩略示意）
+# proxies:
+# - name: "节点1"
+#   type: vmess
+#   server: 1.2.3.4
+#   port: 443
+# - name: "节点2"
+#   type: ss
+#   server: 5.6.7.8
+#   port: 8388
+#
+# proxy-groups:
+# - name: "Proxy"
+#   type: select
+#   proxies:
+#     - 节点1
+#     - 节点2
+
+# 如果你希望我为订阅转换器生成一个示例脚本（Node/Python/PowerShell），告诉我偏好语言，我可以继续生成。
